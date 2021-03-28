@@ -1,4 +1,4 @@
-package Data;
+package BankingSystem.Data;
 
 public class BankAccount extends UserAccount implements DataObject {
     // creditCardNumber

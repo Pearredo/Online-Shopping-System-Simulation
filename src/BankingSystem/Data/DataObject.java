@@ -1,4 +1,4 @@
-package Data;
+package BankingSystem.Data;
 
 public interface DataObject {
     byte[] serialize();

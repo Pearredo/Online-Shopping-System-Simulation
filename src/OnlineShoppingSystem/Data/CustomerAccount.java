@@ -1,4 +1,4 @@
-package Data;
+package OnlineShoppingSystem.Data;
 
 public class CustomerAccount extends UserAccount implements DataObject {
     // orders
