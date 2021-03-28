@@ -1,4 +1,4 @@
-package Data;
+package OnlineShoppingSystem.Data;
 
 public class UserAccount {
     // userID
