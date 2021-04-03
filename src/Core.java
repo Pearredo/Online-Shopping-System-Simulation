@@ -55,18 +55,19 @@ public class Core {
             case "bs":
                 dir = "BankingSystem/";
                 system = "Banking System";
-                defaultConfigData.put("DIR_DATABASE", "DataBase/");
                 defaultConfigData.put("DIR_BANKREQUESTS", "Requests/");
+                defaultConfigData.put("DIR_DATABASE", "DataBase/");
                 defaultConfigData.put("FILE_DATA_BANKACCOUNTS", "BankAccounts.dat");
                 break;
             case "oss":
                 dir = "OnlineShoppingSystem/";
                 system = "Online Shopping System";
-                defaultConfigData.put("DIR_DATABASE", "DataBase/");
                 defaultConfigData.put("DIR_BANKREQUESTS", "../BankingSystem/Requests/");
+                defaultConfigData.put("DIR_DATABASE", "DataBase/");
                 defaultConfigData.put("FILE_DATA_CUSTOMERACCOUNTS", "CustomerAccounts.dat");
                 defaultConfigData.put("FILE_DATA_ITEMS", "Items.dat");
                 defaultConfigData.put("FILE_DATA_ORDERS", "Orders.dat");
+                defaultConfigData.put("FILE_DATA_ORDERITEMS", "OrderItems.dat");
                 defaultConfigData.put("FILE_DATA_SUPPLIERACCOUNTS", "SupplierAccounts.dat");
                 break;
         }
@@ -159,9 +160,9 @@ public class Core {
                 }
             }
         }
+        configData.put("DEBUG", _DEBUG ? "Y" : "N");
         return configData;
     }
-
     public static void main(String[] args) throws Exception {
         _DEBUG = true || args.length > 0 && args[1].equalsIgnoreCase("v");
         if (_DEBUG) System.out.println("Loading the Online Shopping System module...");
