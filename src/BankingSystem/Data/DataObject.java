@@ -1,7 +1,10 @@
 package BankingSystem.Data;
 
 public interface DataObject {
+    void fill(byte[] record);
+    int id();
+    void setID(int id);
+    int recordLength();
     byte[] serialize();
-    String getDataFileName();
-    String getDataType();
+    String dataFile();
 }
