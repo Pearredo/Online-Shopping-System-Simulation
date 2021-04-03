@@ -56,12 +56,13 @@ public class Request implements DataObject {
     public void setID(int id) { accountID = id; }
     public int recordLength() { return recordLength; }
     public byte[] serialize() {
+        int i, l;
         ByteBuffer serial = ByteBuffer.allocate(recordLength);
-        serial.put(action);
-        serial.put(idType);
-        serial.put(DataManager.encode(accountID));
-        serial.put(DataManager.encode(creditCard, creditCardLength));
-        serial.put(DataManager.encode(balance));
+        serial.put(i = 0, action);
+        serial.put(++i, idType);
+        serial.put(DataManager.encode(accountID), ++i, l = 4);
+        serial.put(DataManager.encode(creditCard, creditCardLength), i += l, l = creditCardLength * 4);
+        serial.put(DataManager.encode(balance), i + l, 4);
         return serial.array();
     }
     public String dataFile() { return dataFile; }

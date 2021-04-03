@@ -9,7 +9,7 @@ public class OrderItem implements DataObject {
     private int itemID;
     private int itemQty;
     private byte orderItemStatus;
-    private int recordLength = 17;
+    private final int recordLength = 17;
     public String dataFile = "FILE_DATA_ORDERITEMS";
     public OrderItem(int orderItemID, int orderID, int itemID, int itemQty, byte orderItemStatus) {
         this.orderItemID = orderItemID;
@@ -31,12 +31,13 @@ public class OrderItem implements DataObject {
     public void setID(int id) { orderItemID = id; }
     public int recordLength() { return recordLength; }
     public byte[] serialize() {
+        int i, l;
         ByteBuffer serial = ByteBuffer.allocate(recordLength);
-        serial.put(DataManager.encode(orderItemID));
-        serial.put(DataManager.encode(orderID));
-        serial.put(DataManager.encode(itemID));
-        serial.put(DataManager.encode(itemQty));
-        serial.put(new byte[] { orderItemStatus });
+        serial.put(DataManager.encode(orderItemID), i = 0, l = 4);
+        serial.put(DataManager.encode(orderID), i += l, l);
+        serial.put(DataManager.encode(itemID), i += l, l);
+        serial.put(DataManager.encode(itemQty), i += l, l);
+        serial.put(i += l, orderItemStatus);
         return serial.array();
     }
     public String dataFile() { return dataFile; }

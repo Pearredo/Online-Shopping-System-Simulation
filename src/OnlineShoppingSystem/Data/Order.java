@@ -12,7 +12,7 @@ public class Order implements DataObject {
     private byte orderDelivery;
     private int invoiceID;
     private long purchaseAuth;
-    private int recordLength = 30;
+    private final int recordLength = 30;
     public String dataFile = "FILE_DATA_ORDERS";
     public Order(int orderID, int customerID, byte orderStatus, int orderDate, float orderCost, byte orderDelivery, int invoiceID, long purchaseAuth) {
         this.orderID = orderID;
@@ -40,15 +40,16 @@ public class Order implements DataObject {
     public void setID(int id) { orderID = id; }
     public int recordLength() { return recordLength; }
     public byte[] serialize() {
+        int i, l;
         ByteBuffer serial = ByteBuffer.allocate(recordLength);
-        serial.put(DataManager.encode(orderID));
-        serial.put(DataManager.encode(customerID));
-        serial.put(new byte[] { orderStatus });
-        serial.put(DataManager.encode(orderDate));
-        serial.put(DataManager.encode(orderCost));
-        serial.put(new byte[] { orderDelivery });
-        serial.put(DataManager.encode(invoiceID));
-        serial.put(DataManager.encode(purchaseAuth));
+        serial.put(DataManager.encode(orderID), i = 0, l = 4);
+        serial.put(DataManager.encode(customerID), i += l, l);
+        serial.put(i += l, orderStatus);
+        serial.put(DataManager.encode(orderDate), ++i, l);
+        serial.put(DataManager.encode(orderCost), i += l, l);
+        serial.put(i += l, orderDelivery);
+        serial.put(DataManager.encode(invoiceID), ++i, l);
+        serial.put(DataManager.encode(purchaseAuth), i + l, 8);
         return serial.array();
     }
     public String dataFile() { return dataFile; }

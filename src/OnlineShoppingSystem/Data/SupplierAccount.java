@@ -31,11 +31,12 @@ public class SupplierAccount implements DataObject {
     public void setID(int id) { supplierID = id; }
     public int recordLength() { return recordLength; }
     public byte[] serialize() {
+        int i, l;
         ByteBuffer serial = ByteBuffer.allocate(recordLength);
-        serial.put(DataManager.encode(supplierID));
-        serial.put(DataManager.encode(username, usernameLength));
-        serial.put(DataManager.encode(password, passwordLength));
-        serial.put(DataManager.encode(name, nameLength));
+        serial.put(DataManager.encode(supplierID), i = 0, l = 4);
+        serial.put(DataManager.encode(username, usernameLength), i += l, l = usernameLength * 4);
+        serial.put(DataManager.encode(password, passwordLength), i += l, l = passwordLength * 4);
+        serial.put(DataManager.encode(name, nameLength), i + l, nameLength * 4);
         return serial.array();
     }
     public String dataFile() { return dataFile; }

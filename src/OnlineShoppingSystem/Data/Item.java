@@ -39,14 +39,15 @@ public class Item implements DataObject {
     public void setID(int id) { itemID = id; }
     public int recordLength() { return recordLength; }
     public byte[] serialize() {
+        int i, l;
         ByteBuffer serial = ByteBuffer.allocate(recordLength);
-        serial.put(DataManager.encode(itemID));
-        serial.put(DataManager.encode(supplierID));
-        serial.put(DataManager.encode(itemName, itemNameLength));
-        serial.put(DataManager.encode(itemDesc, itemDescLength));
-        serial.put(DataManager.encode(itemRegCost));
-        serial.put(DataManager.encode(itemPremCost));
-        serial.put(DataManager.encode(itemQty));
+        serial.put(DataManager.encode(itemID), i = 0, l = 4);
+        serial.put(DataManager.encode(supplierID), i += l, l);
+        serial.put(DataManager.encode(itemName, itemNameLength), i += l, l = itemNameLength * 4);
+        serial.put(DataManager.encode(itemDesc, itemDescLength), i += l, l = itemDescLength * 4);
+        serial.put(DataManager.encode(itemRegCost), i += l, l = 4);
+        serial.put(DataManager.encode(itemPremCost), i += l, l);
+        serial.put(DataManager.encode(itemQty), i + l, l);
         return serial.array();
     }
     public String dataFile() { return dataFile; }

@@ -45,15 +45,16 @@ public class CustomerAccount implements DataObject {
     public void setID(int id) { customerID = id; }
     public int recordLength() { return recordLength; }
     public byte[] serialize() {
+        int i, l;
         ByteBuffer serial = ByteBuffer.allocate(recordLength);
-        serial.put(DataManager.encode(customerID));
-        serial.put(DataManager.encode(username, usernameLength));
-        serial.put(DataManager.encode(password, passwordLength));
-        serial.put(DataManager.encode(name, nameLength));
-        serial.put(DataManager.encode(address, addressLength));
-        serial.put(DataManager.encode(creditCard, creditCardLength));
-        serial.put(new byte[] { isPremium ? (byte)1 : 0 });
-        serial.put(new byte[] { premPaid ? (byte)1 : 0 });
+        serial.put(DataManager.encode(customerID), i = 0, l = 4);
+        serial.put(DataManager.encode(username, usernameLength), i += l, l = usernameLength * 4);
+        serial.put(DataManager.encode(password, passwordLength), i += l, l = passwordLength * 4);
+        serial.put(DataManager.encode(name, nameLength), i += l, l = nameLength * 4);
+        serial.put(DataManager.encode(address, addressLength), i += l, l = addressLength * 4);
+        serial.put(DataManager.encode(creditCard, creditCardLength), i += l, l = creditCardLength * 4);
+        serial.put(i += l, isPremium ? (byte)1 : 0);
+        serial.put(++i, premPaid ? (byte)1 : 0);
         return serial.array();
     }
     public String dataFile() { return dataFile; }
