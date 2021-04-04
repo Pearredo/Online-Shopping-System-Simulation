@@ -4,21 +4,25 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 public class BankAccount implements DataObject {
+    // Attributes
     private int accountID;
     private String creditCard;
     private final int creditCardLength = 16;
     private float balance;
     private final int recordLength = 72;
     public String dataFile = "FILE_DATA_BANKACCOUNTS";
+    // Constructors
     public BankAccount(int accountID, String creditCard, float balance) {
         this.accountID = accountID;
         this.creditCard = creditCard.substring(0, creditCardLength);
         this.balance = balance;
     }
     public BankAccount() {}
+    // Class-Specific Attribute Methods
     public String getCreditCard() { return creditCard; }
     public double getBalance() { return balance; }
     public void addBalance(double amount) { balance += amount; }
+    // DataObject Method Overrides
     public void fill(byte[] record) {
         int i = 0;
         accountID = DataManager.decodeInt(Arrays.copyOfRange(record, i, (i += 4) - 1));
@@ -37,4 +41,8 @@ public class BankAccount implements DataObject {
         return serial.array();
     }
     public String dataFile() { return dataFile; }
+    // DataObject-Dependent Methods
+
+    // Static Methods
+
 }

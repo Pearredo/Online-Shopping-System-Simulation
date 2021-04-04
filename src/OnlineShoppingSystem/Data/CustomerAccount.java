@@ -1,9 +1,11 @@
 package OnlineShoppingSystem.Data;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class CustomerAccount implements DataObject {
+    // Attributes
     private int customerID;
     private String username;
     private final int usernameLength = 20;
@@ -19,8 +21,9 @@ public class CustomerAccount implements DataObject {
     private boolean premPaid;
     private final int recordLength = 790;
     public String dataFile = "FILE_DATA_CUSTOMERACCOUNTS";
-    public CustomerAccount(int customerID, String username, String password, String name, String address, String creditCard, boolean isPremium, boolean premPaid) {
-        this.customerID = customerID;
+    // Constructors
+    public CustomerAccount(String username, String password, String name, String address, String creditCard, boolean isPremium, boolean premPaid) {
+        customerID = 0;
         this.username = username.substring(0, usernameLength);
         this.password = password.substring(0, passwordLength);
         this.name = name.substring(0, nameLength);
@@ -30,6 +33,20 @@ public class CustomerAccount implements DataObject {
         this.premPaid = premPaid;
     }
     public CustomerAccount() { }
+    // Class-Specific Attribute Methods
+    public String getUsername() { return username; }
+    public String getPassword() { return password; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+    public String getCreditCard() { return creditCard; }
+    public void setCreditCard(String creditCard) { this.creditCard = creditCard; }
+    public boolean isPremium() { return isPremium; }
+    public void setPremium(boolean isPremium) { this.isPremium = isPremium; }
+    public boolean premPaid() { return premPaid; }
+    public void setPremPaid(boolean premPaid) { this.premPaid = premPaid; }
+    // DataObject Method Overrides
     public void fill(byte[] record) {
         int i = 0;
         customerID = DataManager.decodeInt(Arrays.copyOfRange(record, i, (i += 4) - 1));
@@ -58,4 +75,30 @@ public class CustomerAccount implements DataObject {
         return serial.array();
     }
     public String dataFile() { return dataFile; }
+    // DataObject-Dependent Methods
+    public boolean create() throws Exception { return DataManager.create(this); }
+    public boolean update() throws Exception { return DataManager.update(this, customerID); }
+    public boolean delete() throws Exception { return DataManager.delete(this, customerID); }
+    // Static Methods
+    public static CustomerAccount Login(String username, String password) throws Exception {
+        boolean exists = false;
+        CustomerAccount account = null,
+            temp = new CustomerAccount();
+        ArrayList<byte[]> accounts;
+        int batchStart = 0,
+            batchSize = 100;
+        while (!exists && (accounts = DataManager.read(temp, batchStart, batchSize)).size() > 0) {
+            batchStart += batchSize;
+            for (byte[] record : accounts) {
+                temp.fill(record);
+                if (exists = temp.getUsername().equals(username)) {
+                    if (temp.getPassword().equals(password)) {
+                        account = temp;
+                    }
+                    break;
+                }
+            }
+        }
+        return account;
+    }
 }

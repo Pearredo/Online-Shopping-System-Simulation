@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Request implements DataObject {
+    // Attributes
     private byte action;
     private byte idType;
     private int accountID;
@@ -13,6 +14,7 @@ public class Request implements DataObject {
     private float balance;
     private final int recordLength = 74;
     public String dataFile = "";
+    // Constructors
     public Request(String action, String idType, int accountID, String creditCard, float balance) {
         switch (action.toLowerCase()) {
             case "g":
@@ -26,6 +28,10 @@ public class Request implements DataObject {
             case "d":
             case "del":
                 this.action = 2;
+                break;
+            case "c":
+            case "chk":
+                this.action = 3;
                 break;
         }
         switch (idType.toLowerCase()) {
@@ -44,6 +50,9 @@ public class Request implements DataObject {
         this.balance = balance;
     }
     public Request() { }
+    // Class-Specific Attribute Methods
+
+    // DataObject Method Overrides
     public void fill(byte[] record) {
         int i = 0;
         action = record[i++];
@@ -66,9 +75,10 @@ public class Request implements DataObject {
         return serial.array();
     }
     public String dataFile() { return dataFile; }
-    public byte[] execute() throws Exception {
-        byte[] result = new byte[8],
-            transID = ByteBuffer.allocate(8).putLong(System.nanoTime()).array();
+    // DataObject-Dependent Methods
+    public long execute() throws Exception {
+        long result = 0,
+            transID = System.nanoTime();
         BankAccount bankAccount = new BankAccount();
         if (idType == 1) {
             accountID = 0;
@@ -94,27 +104,27 @@ public class Request implements DataObject {
                     if (data != null) {
                         bankAccount.fill(data);
                         if (bankAccount.id() == accountID) {
-                            for (int i = 0; i < 8; i++) result[i] |= transID[i];
+                            result = transID;
                         }
                     }
                 } break;
                 case 1: { // Put
                     byte[] data = DataManager.read(bankAccount, accountID);
                     if (data == null && balance > 0 && DataManager.create(new BankAccount(-1, creditCard, balance))) {
-                        for (int i = 0; i < 8; i++) result[i] |= transID[i];
+                        result = transID;
                     } else if (data != null) {
                         bankAccount.fill(data);
                         if (balance > 0 || bankAccount.getBalance() > balance) {
                             bankAccount.addBalance(balance);
                             if (DataManager.update(bankAccount, accountID)) {
-                                for (int i = 0; i < 8; i++) result[i] |= transID[i];
+                                result = transID;
                             }
                         }
                     }
                 } break;
                 case 2: { // Del
                     if (DataManager.delete(bankAccount, accountID)) {
-                        for (int i = 0; i < 8; i++) result[i] |= transID[i];
+                        result = transID;
                     }
                 } break;
                 case 3: { // Chk
@@ -122,7 +132,7 @@ public class Request implements DataObject {
                     if (data != null) {
                         bankAccount.fill(data);
                         if (bankAccount.id() == accountID && bankAccount.getBalance() > -balance) {
-                            for (int i = 0; i < 8; i++) result[i] |= transID[i];
+                            result = transID;
                         }
                     }
                 } break;
@@ -130,4 +140,6 @@ public class Request implements DataObject {
         }
         return result;
     }
+    // Static Methods
+
 }
