@@ -22,13 +22,13 @@ public class Main {
                     try {
                         RandomAccessFile answer = new RandomAccessFile(requestFile.getAbsolutePath().replace(requestFile.getName(), "ANSWER_" + requestFile.getName()), "rw");
                         answer.setLength(8);
-                        answer.write(request.execute());
+                        answer.writeLong(request.execute());
                         answer.close();
                     } catch (Exception ex) {
                         throw new Exception(String.format("Request result %s already existed or could not be created.", "ANSWER_" + requestFile.getName()));
                     }
                 }
-                // Errors beyond this points should crash the thread to try and mitigate i/o issues
+                // Errors beyond this points should crash the thread to try and mitigate i/o issues... or something like that
                 requestFile.renameTo(new File(requestFile.getAbsolutePath().replace(requestFile.getName(), "RESOLVED_" + requestFile.getName())));
                 file.close();
                 requestFile.delete();
