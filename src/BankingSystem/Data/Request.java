@@ -49,6 +49,7 @@ public class Request implements DataObject {
         this.creditCard = creditCard.substring(0, creditCardLength);
         this.balance = balance;
     }
+    public Request(byte[] record) { fill(record); }
     public Request() { }
     // Class-Specific Attribute Methods
 

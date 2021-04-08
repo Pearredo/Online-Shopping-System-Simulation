@@ -50,35 +50,8 @@ public class BankRequest implements DataObject {
     }
     public String dataFile() { return dataFile; }
     // DataObject-Dependent Methods
-    public long execute() throws Exception {
-        boolean answered = false;
-        long result = 0,
-            fileID;
-        String requestPath = ClassLoader.getSystemResource(DataManager.getDir("DIR_BANKREQUESTS")).getPath().substring(1);
-        File requestDir = new File(requestPath),
-            requestFile,
-            replyFile;
-        while (!(requestFile = new File(String.format("%s/%d.dat", requestPath, fileID = System.nanoTime()))).createNewFile()) {
-            Thread.sleep(5); // Let the time stamp increment a bit and try again with a new file ID
-        }
-        RandomAccessFile requestWriter = new RandomAccessFile(requestFile, "rw");
-        requestWriter.write(serialize());
-        requestWriter.close();
-        Thread.sleep(1000);
-        while (!answered) {
-            File[] files = requestDir.listFiles();
-            if (files != null && files.length > 0)
-            for (File file : files) {
-                if (answered = file.getName().equalsIgnoreCase(String.format("ANSWER_%d.dat", fileID))) {
-                    RandomAccessFile requestReader = new RandomAccessFile(file, "r");
-                    result = requestReader.readLong();
-                    requestReader.close();
-                    file.delete();
-                    break;
-                }
-            }
-        }
-        return result;
+    public long execute() {
+        return ByteBuffer.wrap(DataManager.getBuffer().send(this.serialize())).getLong();
     }
     // Static Methods
 

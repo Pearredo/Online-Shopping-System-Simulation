@@ -1,5 +1,6 @@
 package BankingSystem.Data;
 
+import Core.Buffer;
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -11,6 +12,7 @@ public class DataManager {
     private static boolean _DEBUG = false;
     private static final boolean _CLEANUP = true;
     private static HashMap<String, String> _CONFIG;
+    private static Buffer _BUFFER;
     static byte[] encode(int v) { return ByteBuffer.allocate(4).putInt(v).array(); }
     static byte[] encode(float v) { return ByteBuffer.allocate(4).putFloat(v).array(); }
     static byte[] encode(String v, int l) {
@@ -42,8 +44,9 @@ public class DataManager {
                 args[0].equalsIgnoreCase("put") || args[0].equalsIgnoreCase("chk") ? Float.parseFloat(args[3]) : 0).execute();
         }
     }
-    public static void initialize(HashMap<String, String> config) {
+    public static void initialize(HashMap<String, String> config, Buffer buffer) {
         _CONFIG = config;
+        _BUFFER = buffer;
         _DEBUG = config.get("DEBUG").equals("Y");
     }
     static String getDir(String id) { return _CONFIG.get(id); }

@@ -1,5 +1,6 @@
 package OnlineShoppingSystem.Data;
 
+import Core.Buffer;
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -11,6 +12,7 @@ public class DataManager {
     private static boolean _DEBUG = false;
     private static final boolean _CLEANUP = true;
     private static HashMap<String, String> _CONFIG;
+    private static Buffer _BUFFER;
     static byte[] encode(int v) { return ByteBuffer.allocate(4).putInt(v).array(); }
     static byte[] encode(long v) { return ByteBuffer.allocate(8).putLong(v).array(); }
     static byte[] encode(float v) { return ByteBuffer.allocate(4).putFloat(v).array(); }
@@ -38,10 +40,12 @@ public class DataManager {
 
         // create stuff based on input...
     }
-    public static void initialize(HashMap<String, String> config) {
+    public static void initialize(HashMap<String, String> config, Buffer buffer) {
         _CONFIG = config;
+        _BUFFER = buffer;
         _DEBUG = config.get("DEBUG").equals("Y");
     }
+    static Buffer getBuffer() { return _BUFFER; }
     static String getDir(String id) { return _CONFIG.get(id); }
     static String getDBDir(String id) { return getDir("DIR_DATABASE") + getDir(id); }
     static boolean create(DataObject data) throws Exception {
