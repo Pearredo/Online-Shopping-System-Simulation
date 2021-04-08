@@ -1,3 +1,5 @@
+package Core;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.net.URL;
@@ -5,11 +7,13 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 class SystemThread extends Thread {
+    private final Buffer buffer;
     private final String type;
     private final HashMap<String, String> config;
     private boolean isExiting;
-    public SystemThread(String newType) throws Exception {
-        type = newType;
+    public SystemThread(String type, Buffer buffer) throws Exception {
+        this.type = type;
+        this.buffer = buffer;
         config = Core.loadConfig(type);
         isExiting = false;
     }
@@ -22,13 +26,13 @@ class SystemThread extends Thread {
                     case "bs":
                         module = "Banking System";
                         while (!isExiting) {
-                            BankingSystem.RequestManager.Main.main(config);
+                            BankingSystem.RequestManager.Main.main(config, buffer);
                         }
                         // Do any post-launch cleanup here...
                         break;
                     case "oss":
                         module = "Online Shopping System";
-                        OnlineShoppingSystem.UI.Main.main(config);
+                        OnlineShoppingSystem.UI.Main.main(config, buffer);
                         // Do any post-launch cleanup here...
                         break;
                 }
@@ -55,14 +59,12 @@ public class Core {
             case "bs":
                 dir = "BankingSystem/";
                 system = "Banking System";
-                defaultConfigData.put("DIR_BANKREQUESTS", "Requests/");
                 defaultConfigData.put("DIR_DATABASE", "DataBase/");
                 defaultConfigData.put("FILE_DATA_BANKACCOUNTS", "BankAccounts.dat");
                 break;
             case "oss":
                 dir = "OnlineShoppingSystem/";
                 system = "Online Shopping System";
-                defaultConfigData.put("DIR_BANKREQUESTS", "../BankingSystem/Requests/");
                 defaultConfigData.put("DIR_DATABASE", "DataBase/");
                 defaultConfigData.put("FILE_DATA_CUSTOMERACCOUNTS", "CustomerAccounts.dat");
                 defaultConfigData.put("FILE_DATA_ITEMS", "Items.dat");
@@ -126,15 +128,6 @@ public class Core {
                 break;
             }
         }
-        // Verify the requests directory is in place and is synced across all systems
-        if (type.equals("oss") || type.equals("bs")) {
-            String requestDir = "BankingSystem/" + configData.get("DIR_BANKREQUESTS").replace("../BankingSystem/", "");
-            URL requestURL = ClassLoader.getSystemResource(requestDir);
-            if (requestURL == null && (_BANKREQUESTDIR || !(new File(root + requestDir).mkdir()))) {
-                throw new Exception(String.format("The %s directory either could not be accessed, could not be created, or is not the same for all related systems.", requestDir));
-            }
-            _BANKREQUESTDIR = true;
-        }
         if (configData.containsKey("DIR_DATABASE")) {
             // Verify the local database directory is in place
             String dbDir = dir + configData.get("DIR_DATABASE");
@@ -165,10 +158,11 @@ public class Core {
     }
     public static void main(String[] args) throws Exception {
         _DEBUG = true || args.length > 0 && args[1].equalsIgnoreCase("v");
+        Buffer buffer = new Buffer();
         if (_DEBUG) System.out.println("Loading the Online Shopping System module...");
-        SystemThread oss = new SystemThread("oss");
+        SystemThread oss = new SystemThread("oss", buffer);
         if (_DEBUG) System.out.println("Loading the Banking System module...");
-        SystemThread bs = new SystemThread("bs");
+        SystemThread bs = new SystemThread("bs", buffer);
         if (_DEBUG) System.out.println("Starting the Online Shopping System module...");
         oss.start();
         if (_DEBUG) System.out.println("Starting the Banking System module...");
@@ -180,6 +174,7 @@ public class Core {
         }
         if (_DEBUG) System.out.println("The Online Shopping System module has terminated.");
         bs.setExiting(true);
+        buffer.send(new byte[] { 7 }); // Trigger the BS exit condition to be caught
         synchronized(bs) {
             if (bs.isAlive()) {
                 bs.wait();

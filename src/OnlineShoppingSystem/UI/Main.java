@@ -1,5 +1,6 @@
 package OnlineShoppingSystem.UI;
 
+import Core.Buffer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -17,8 +18,9 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    public static void main(HashMap<String, String> config) {
+    public static void main(HashMap<String, String> config, Buffer buffer) {
         // Do stuff with config...
+        OnlineShoppingSystem.Data.DataManager.initialize(config, buffer);
         launch();
     }
 }
