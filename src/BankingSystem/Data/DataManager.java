@@ -14,6 +14,7 @@ public class DataManager {
     private static HashMap<String, String> _CONFIG;
     private static Buffer _BUFFER;
     static byte[] encode(int v) { return ByteBuffer.allocate(4).putInt(v).array(); }
+    static byte[] encode(long v) { return ByteBuffer.allocate(8).putLong(v).array(); }
     static byte[] encode(float v) { return ByteBuffer.allocate(4).putFloat(v).array(); }
     static byte[] encode(String v, int l) {
         int i = 0;
@@ -22,6 +23,7 @@ public class DataManager {
         return d;
     }
     static float decodeFloat(byte[] b) { return ByteBuffer.wrap(b).getFloat(); }
+    static long decodeLong(byte[] b) { return ByteBuffer.wrap(b).getLong(); }
     static int decodeInt(byte[] b) { return ByteBuffer.wrap(b).getInt(); }
     static String decodeString(byte[] b) { return new String(b, StandardCharsets.UTF_8); }
     public static void main(String[] args) throws Exception {
@@ -49,6 +51,7 @@ public class DataManager {
         _BUFFER = buffer;
         _DEBUG = config.get("DEBUG").equals("Y");
     }
+    static Buffer getBuffer() { return _BUFFER; }
     static String getDir(String id) { return _CONFIG.get(id); }
     static String getDBDir(String id) { return getDir("DIR_DATABASE") + getDir(id); }
     static boolean create(DataObject data) throws Exception {

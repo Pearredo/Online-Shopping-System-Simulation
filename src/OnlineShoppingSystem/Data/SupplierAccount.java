@@ -56,25 +56,25 @@ public class SupplierAccount implements DataObject {
     public boolean delete() throws Exception { return DataManager.delete(this, supplierID); }
     // Static Methods
     public static SupplierAccount Login(String username, String password) throws Exception {
-        int accountID = 0;
+        boolean exists = false;
         SupplierAccount account = null,
-                temp = new SupplierAccount();
+            temp = new SupplierAccount();
         ArrayList<byte[]> accounts;
         int batchStart = 0,
-                batchSize = 100;
-        while (accountID < 1 && (accounts = DataManager.read(temp, batchStart, batchSize)).size() > 0) {
+            batchSize = 100;
+        while (!exists && (accounts = DataManager.read(temp, batchStart, batchSize)).size() > 0) {
             batchStart += batchSize;
             for (byte[] record : accounts) {
                 temp.fill(record);
-                if (temp.getUsername().equals(username)) {
-                    accountID = temp.id();
+                if (exists = temp.getUsername().equals(username)) {
+                    if (temp.getPassword().equals(password)) {
+                        account = temp;
+                    } else {
+                        account = new SupplierAccount(username, password, "");
+                    }
                     break;
                 }
             }
-        }
-        if (accountID > 0 && temp.getPassword().equals(password)) {
-            account = new SupplierAccount();
-            account.fill(DataManager.read(account, account.id()));
         }
         return account;
     }
