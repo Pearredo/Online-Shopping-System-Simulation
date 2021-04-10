@@ -26,6 +26,9 @@ public class OrderItem implements DataObject {
     // Class-Specific Attribute Methods
     public int getOrderID() { return orderID; }
     public int getItemID() { return itemID; }
+    public int getItemQty() { return itemQty; }
+    public void setItemQty(int itemQty) { this.itemQty = itemQty; }
+    public byte getOrderItemStatus() { return orderItemStatus; }
     public void setOrderItemStatus(byte orderItemStatus) { this.orderItemStatus = orderItemStatus; }
     // DataObject Method Overrides
     public void fill(byte[] record) {

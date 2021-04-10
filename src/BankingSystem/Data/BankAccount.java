@@ -20,8 +20,8 @@ public class BankAccount implements DataObject {
     public BankAccount() {}
     // Class-Specific Attribute Methods
     public String getCreditCard() { return creditCard; }
-    public double getBalance() { return balance; }
-    public void addBalance(double amount) { balance += amount; }
+    public float getBalance() { return balance; }
+    public void addBalance(float amount) { balance += amount; }
     // DataObject Method Overrides
     public void fill(byte[] record) {
         int i = 0;

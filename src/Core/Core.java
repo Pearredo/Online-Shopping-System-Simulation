@@ -48,7 +48,6 @@ class SystemThread extends Thread {
 
 public class Core {
     public static boolean _DEBUG = true;
-    public static boolean _BANKREQUESTDIR = false;
     public static HashMap<String, String> loadConfig(String type) throws Exception {
         HashMap<String, String> defaultConfigData = new HashMap<>(),
             configData = new HashMap<>();
