@@ -3,7 +3,7 @@ package OnlineShoppingSystem.Data;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
-
+//item class
 public class Item implements DataObject {
     // Attributes
     private int itemID;

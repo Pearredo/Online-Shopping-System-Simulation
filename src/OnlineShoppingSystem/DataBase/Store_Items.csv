@@ -1,0 +1,13 @@
+Supplier name,Item name,Item description,Item quantity,regular cost,prenium cost
+A-Z inc.,Donut,Bakery treat with hole in middle,200,4.99,3.99
+A-z inc.,Cookie,bakery treat,300,1.99,0.99
+A-Z inc.,Ice cream,Solid cold dairy product,75,8.99,5.99
+Greedy Company,Lemons,not to be confused with Omega Mart Lemons,300,5.99,0.99
+Greedy Company,Ramen,Noodles,600,14.99,10.99
+Greedy Company,Bread crumbs,poor people food,1000,19.99,4.99
+Omega-Mart,Orange Drink,Orange-colored beverage,200,3.99,1.99
+Omega-Mart,Omega Mart Lemons,not to be confused with Lemons,200,3.99,0.99
+Omega-Mart,Milk,Mamal Drink,75,1.99,0.99
+SkyCorp,Mind-Melter,Anxiety Medication,100,5.99,4.99
+SkyCorp,Charm Bars,Candy Bar,200,1.99,0.99
+SkyCorp,Closetra,Medical pill,50,7.99,4.99
