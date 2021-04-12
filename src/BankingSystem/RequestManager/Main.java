@@ -10,7 +10,9 @@ public class Main {
     public static void main(HashMap<String, String> config, Buffer buffer) throws Exception {
         _DEBUG = config.get("DEBUG").equals("Y");
         byte[] request = buffer.receive();
-        if (request[0] < 7) {
+        if (request.length == 1 && request[0] == -1) {
+            buffer.reply(new byte[] { 0 });
+        } else {
             DataManager.initialize(config, buffer);
             buffer.reply(ByteBuffer.wrap(new byte[8]).putLong(new Request(request).execute()).array());
         }

@@ -173,12 +173,7 @@ public class Core {
         }
         if (_DEBUG) System.out.println("The Online Shopping System module has terminated.");
         bs.setExiting(true);
-        buffer.send(new byte[] { 7 }); // Trigger the BS exit condition to be caught
-        synchronized(bs) {
-            if (bs.isAlive()) {
-                bs.wait();
-            }
-        }
+        buffer.send(new byte[] { -1 }); // Trigger the BS exit condition to be caught
         if (_DEBUG) System.out.println("The Banking System Module has terminated.");
     }
 }
