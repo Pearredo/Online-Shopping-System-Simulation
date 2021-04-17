@@ -7,4 +7,5 @@ public interface DataObject {
     int recordLength();
     byte[] serialize();
     String dataFile();
+    String stringify();
 }

@@ -27,6 +27,15 @@ public class Order implements DataObject {
         invoiceID = 0;
         purchaseAuth = 0;
     }
+    public Order(int id) throws Exception {
+        byte[] data = DataManager.read(this, id);
+        if (data != null) {
+            fill(data);
+            if (id() != id) {
+                fill(new byte[recordLength()]);
+            }
+        }
+    }
     public Order(byte[] record) { fill(record); }
     public Order() { }
     // Class-Specific Attribute Methods
@@ -42,32 +51,50 @@ public class Order implements DataObject {
     // DataObject Method Overrides
     public void fill(byte[] record) {
         int i = 0;
-        orderID = DataManager.decodeInt(Arrays.copyOfRange(record, i, (i += 4) - 1));
-        customerID = DataManager.decodeInt(Arrays.copyOfRange(record, i, (i += 4) - 1));
+        orderID = DataManager.decodeInt(Arrays.copyOfRange(record, i, i += 4));
+        customerID = DataManager.decodeInt(Arrays.copyOfRange(record, i, i += 4));
         orderStatus = record[i++];
-        orderDate = DataManager.decodeInt(Arrays.copyOfRange(record, i, (i += 4) - 1));
-        orderCost = DataManager.decodeFloat(Arrays.copyOfRange(record, i, (i += 4) - 1));
+        orderDate = DataManager.decodeInt(Arrays.copyOfRange(record, i, i += 4));
+        orderCost = DataManager.decodeFloat(Arrays.copyOfRange(record, i, i += 4));
         orderDelivery = record[i++];
-        invoiceID = DataManager.decodeInt(Arrays.copyOfRange(record, i, (i += 4) - 1));
-        purchaseAuth = DataManager.decodeLong(Arrays.copyOfRange(record, i, i + 7));
+        invoiceID = DataManager.decodeInt(Arrays.copyOfRange(record, i, i += 4));
+        purchaseAuth = DataManager.decodeLong(Arrays.copyOfRange(record, i, i + 8));
     }
     public int id() { return orderID; }
     public void setID(int id) { orderID = id; }
     public int recordLength() { return recordLength; }
     public byte[] serialize() {
-        int i, l;
         ByteBuffer serial = ByteBuffer.allocate(recordLength);
-        serial.put(DataManager.encode(orderID), i = 0, l = 4);
-        serial.put(DataManager.encode(customerID), i += l, l);
-        serial.put(i += l, orderStatus);
-        serial.put(DataManager.encode(orderDate), ++i, l);
-        serial.put(DataManager.encode(orderCost), i += l, l);
-        serial.put(i += l, orderDelivery);
-        serial.put(DataManager.encode(invoiceID), ++i, l);
-        serial.put(DataManager.encode(purchaseAuth), i + l, 8);
+        serial.put(DataManager.encode(orderID), 0, 4);
+        serial.put(DataManager.encode(customerID), 0, 4);
+        serial.put(8, orderStatus);
+        serial.put(DataManager.encode(orderDate), 0, 4);
+        serial.put(DataManager.encode(orderCost), 0, 4);
+        serial.put(17, orderDelivery);
+        serial.put(DataManager.encode(invoiceID), 0, 4);
+        serial.put(DataManager.encode(purchaseAuth), 0, 8);
         return serial.array();
     }
     public String dataFile() { return dataFile; }
+    public String stringify() {
+        return String.format(
+            "Order ID: %d\n" +
+            "Customer ID ID: %d\n" +
+            "Order Status: %d\n" +
+            "Order Date: %d\n" +
+            "Order Cost: %,.2f\n" +
+            "Order Delivery: %d\n" +
+            "Invoice ID: %d\n" +
+            "Purchase Auth.: %d\n",
+            orderID,
+            customerID,
+            orderStatus,
+            orderDate,
+            orderCost,
+            orderDelivery,
+            invoiceID,
+            purchaseAuth);
+    }
     // DataObject-Dependent Methods
     public boolean create() throws Exception { return DataManager.create(this); }
     public boolean update() throws Exception { return DataManager.update(this, orderID); }
@@ -77,6 +104,19 @@ public class Order implements DataObject {
         return (invoiceID = (purchaseAuth = request.execute()) > 0 ? orderID : 0) > 0;
     }
     // Static Methods
+    public static void showAll() throws Exception {
+        Order record = new Order();
+        ArrayList<byte[]> accounts;
+        int batchStart = 0,
+                batchSize = 100;
+        while ((accounts = DataManager.read(record, batchStart, batchSize)).size() > 0) {
+            batchStart += batchSize;
+            for (byte[] account : accounts) {
+                record.fill(account);
+                System.out.println(record.stringify());
+            }
+        }
+    }
     public static Order getOrder(int orderID) throws Exception {
         Order order = null,
             temp = new Order();

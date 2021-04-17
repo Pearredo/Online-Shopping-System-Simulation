@@ -33,6 +33,9 @@ public class Request implements DataObject {
             case "chk":
                 this.action = 3;
                 break;
+            case "a":
+            case "add":
+                this.action = 4;
         }
         switch (idType.toLowerCase()) {
             case "a":
@@ -46,7 +49,7 @@ public class Request implements DataObject {
                 this.idType = 1;
         }
         this.accountID = accountID;
-        this.creditCard = creditCard.substring(0, creditCardLength);
+        this.creditCard = creditCard.substring(0, Math.min(creditCard.length(), creditCardLength));
         this.balance = balance;
     }
     public Request(byte[] record) { fill(record); }
@@ -66,16 +69,28 @@ public class Request implements DataObject {
     public void setID(int id) { accountID = id; }
     public int recordLength() { return recordLength; }
     public byte[] serialize() {
-        int i, l;
         ByteBuffer serial = ByteBuffer.allocate(recordLength);
-        serial.put(i = 0, action);
-        serial.put(++i, idType);
-        serial.put(DataManager.encode(accountID), ++i, l = 4);
-        serial.put(DataManager.encode(creditCard, creditCardLength), i += l, l = creditCardLength * 4);
-        serial.put(DataManager.encode(balance), i + l, 4);
+        serial.put(0, action);
+        serial.put(0, idType);
+        serial.put(DataManager.encode(accountID), 0, 4);
+        serial.put(DataManager.encode(creditCard, creditCardLength), 0, creditCardLength * 4);
+        serial.put(DataManager.encode(balance), 0, 4);
         return serial.array();
     }
     public String dataFile() { return dataFile; }
+    public String stringify() {
+        return String.format(
+            "Action: %d\n" +
+            "ID Type: %d\n" +
+            "Account ID: %d\n" +
+            "Credit Card: %s\n" +
+            "Balance: %,.2f\n",
+            action,
+            idType,
+            accountID,
+            creditCard,
+            balance);
+    }
     // DataObject-Dependent Methods
     public long execute() throws Exception {
         long result = 0,
@@ -111,9 +126,7 @@ public class Request implements DataObject {
                 } break;
                 case 1: { // Put
                     byte[] data = DataManager.read(bankAccount, accountID);
-                    if (data == null && balance > 0 && DataManager.create(new BankAccount(-1, creditCard, balance))) {
-                        result = transID;
-                    } else if (data != null) {
+                    if (data != null) {
                         bankAccount.fill(data);
                         if (balance > 0 || bankAccount.getBalance() > balance) {
                             bankAccount.addBalance(balance);
@@ -138,6 +151,9 @@ public class Request implements DataObject {
                     }
                 } break;
             }
+        } else {
+            // Add?
+            result = action == 4 && !creditCard.isEmpty() && DataManager.create(new BankAccount(creditCard, balance)) ? transID : result;
         }
         return result;
     }
