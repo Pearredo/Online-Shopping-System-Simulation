@@ -49,6 +49,19 @@ public class BankRequest implements DataObject {
         return serial.array();
     }
     public String dataFile() { return dataFile; }
+    public String stringify() {
+        return String.format(
+            "Action: %d\n" +
+            "ID Type: %d\n" +
+            "Account ID: %d\n" +
+            "Credit Card: %s\n" +
+            "Balance: %,.2f\n",
+            action,
+            idType,
+            accountID,
+            creditCard,
+            balance);
+    }
     // DataObject-Dependent Methods
     public long execute() {
         return ByteBuffer.wrap(DataManager.getBuffer().send(this.serialize())).getLong();

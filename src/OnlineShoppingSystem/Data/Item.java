@@ -29,6 +29,15 @@ public class Item implements DataObject {
         this.itemQty = itemQty;
         reservedQty = 0;
     }
+    public Item(int id) throws Exception {
+        byte[] data = DataManager.read(this, id);
+        if (data != null) {
+            fill(data);
+            if (id() != id) {
+                fill(new byte[recordLength()]);
+            }
+        }
+    }
     public Item(byte[] record) { fill(record); }
     public Item() { }
     // Class-Specific Attribute Methods
@@ -46,27 +55,26 @@ public class Item implements DataObject {
     // DataObject Method Overrides
     public void fill(byte[] record) {
         int i = 0;
-        itemID = DataManager.decodeInt(Arrays.copyOfRange(record, i, (i += 4) - 1));
-        supplierID = DataManager.decodeInt(Arrays.copyOfRange(record, i, (i += 4) - 1));
-        itemName = DataManager.decodeString(Arrays.copyOfRange(record, i, (i += itemNameLength * 4) - 1));
-        itemDesc = DataManager.decodeString(Arrays.copyOfRange(record, i, (i += itemDescLength * 4) - 1));
-        itemRegCost = DataManager.decodeFloat(Arrays.copyOfRange(record, i, (i += 4) - 1));
-        itemPremCost = DataManager.decodeFloat(Arrays.copyOfRange(record, i, (i += 4) - 1));
-        itemQty = DataManager.decodeInt(Arrays.copyOfRange(record, i, i + 3));
+        itemID = DataManager.decodeInt(Arrays.copyOfRange(record, i, i += 4));
+        supplierID = DataManager.decodeInt(Arrays.copyOfRange(record, i, i += 4));
+        itemName = DataManager.decodeString(Arrays.copyOfRange(record, i, i += itemNameLength * 4));
+        itemDesc = DataManager.decodeString(Arrays.copyOfRange(record, i, i += itemDescLength * 4));
+        itemRegCost = DataManager.decodeFloat(Arrays.copyOfRange(record, i, i += 4));
+        itemPremCost = DataManager.decodeFloat(Arrays.copyOfRange(record, i, i += 4));
+        itemQty = DataManager.decodeInt(Arrays.copyOfRange(record, i, i + 4));
     }
     public int id() { return itemID; }
     public void setID(int id) { itemID = id; }
     public int recordLength() { return recordLength; }
     public byte[] serialize() {
-        int i, l;
         ByteBuffer serial = ByteBuffer.allocate(recordLength);
-        serial.put(DataManager.encode(itemID), i = 0, l = 4);
-        serial.put(DataManager.encode(supplierID), i += l, l);
-        serial.put(DataManager.encode(itemName, itemNameLength), i += l, l = itemNameLength * 4);
-        serial.put(DataManager.encode(itemDesc, itemDescLength), i += l, l = itemDescLength * 4);
-        serial.put(DataManager.encode(itemRegCost), i += l, l = 4);
-        serial.put(DataManager.encode(itemPremCost), i += l, l);
-        serial.put(DataManager.encode(itemQty), i + l, l);
+        serial.put(DataManager.encode(itemID), 0, 4);
+        serial.put(DataManager.encode(supplierID), 0, 4);
+        serial.put(DataManager.encode(itemName, itemNameLength), 0, itemNameLength * 4);
+        serial.put(DataManager.encode(itemDesc, itemDescLength), 0, itemDescLength * 4);
+        serial.put(DataManager.encode(itemRegCost), 0, 4);
+        serial.put(DataManager.encode(itemPremCost), 0, 4);
+        serial.put(DataManager.encode(itemQty), 0, 4);
         return serial.array();
     }
     public String dataFile() { return dataFile; }
@@ -74,7 +82,39 @@ public class Item implements DataObject {
     public boolean create() throws Exception { return DataManager.create(this); }
     public boolean update() throws Exception { return DataManager.update(this, itemID); }
     public boolean delete() throws Exception { return DataManager.delete(this, itemID); }
+    public String stringify() {
+        return String.format(
+            "Item ID: %d\n" +
+            "Supplier ID ID: %d\n" +
+            "Item Name: %s\n" +
+            "Item Desc: %s\n" +
+            "Item Reg Cost: %,.2f\n" +
+            "Item Prem Cost: %,.2f\n" +
+            "Item Qty: %d\n" +
+            "Reserved Qty: %d\n",
+            itemID,
+            supplierID,
+            itemName,
+            itemDesc,
+            itemRegCost,
+            itemPremCost,
+            itemQty,
+            reservedQty);
+    }
     // Static Methods
+    public static void showAll() throws Exception {
+        Item record = new Item();
+        ArrayList<byte[]> accounts;
+        int batchStart = 0,
+                batchSize = 100;
+        while ((accounts = DataManager.read(record, batchStart, batchSize)).size() > 0) {
+            batchStart += batchSize;
+            for (byte[] account : accounts) {
+                record.fill(account);
+                System.out.println(record.stringify());
+            }
+        }
+    }
     public static Item getItem(int itemID) throws Exception {
         Item item = null,
             temp = new Item();
