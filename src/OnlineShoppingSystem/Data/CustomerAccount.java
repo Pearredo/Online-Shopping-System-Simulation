@@ -45,13 +45,13 @@ public class CustomerAccount implements DataObject {
     // Class-Specific Attribute Methods
     public String getUsername() { return username; }
     public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
+    public void setPassword(String password) { this.password = password.substring(0, Math.min(password.length(), passwordLength)); }
     public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public void setName(String name) { this.name = name.substring(0, Math.min(name.length(), nameLength)); }
     public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
+    public void setAddress(String address) { this.address = address.substring(0, Math.min(address.length(), addressLength)); }
     public String getCreditCard() { return creditCard; }
-    public void setCreditCard(String creditCard) { this.creditCard = creditCard; }
+    public void setCreditCard(String creditCard) { this.creditCard = creditCard.substring(0, Math.min(creditCard.length(), creditCardLength)); }
     public boolean isPremium() { return isPremium; }
     public void setPremium(boolean isPremium) { this.isPremium = isPremium; }
     public boolean premPaid() { return premPaid; }

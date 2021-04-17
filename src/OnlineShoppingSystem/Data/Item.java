@@ -22,8 +22,8 @@ public class Item implements DataObject {
     public Item(int supplierID, String itemName, String itemDesc, float itemRegCost, float itemPremCost, int itemQty) {
         itemID = 0;
         this.supplierID = supplierID;
-        this.itemName = itemName.substring(0, itemNameLength);
-        this.itemDesc = itemDesc.substring(0, itemDescLength);
+        this.itemName = itemName.substring(0, Math.min(itemName.length(), itemNameLength));
+        this.itemDesc = itemDesc.substring(0, Math.min(itemDesc.length(), itemDescLength));
         this.itemRegCost = itemRegCost;
         this.itemPremCost = itemPremCost;
         this.itemQty = itemQty;
@@ -43,7 +43,7 @@ public class Item implements DataObject {
     // Class-Specific Attribute Methods
     public int getSupplierID() { return supplierID; }
     public String getItemDesc() { return itemDesc; }
-    public void setItemDesc(String itemDesc) { this.itemDesc = itemDesc; }
+    public void setItemDesc(String itemDesc) { this.itemDesc = itemDesc.substring(0, Math.min(itemDesc.length(), itemDescLength)); }
     public float getItemRegCost() { return itemRegCost; }
     public void setItemRegCost(float itemRegCost) { this.itemRegCost = itemRegCost; }
     public float getItemPremCost() { return itemPremCost; }
