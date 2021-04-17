@@ -79,7 +79,7 @@ public class Core {
             File configFile = new File(String.format("%s/%s.config", dirURL.getPath().substring(1), type));
             if (configFile.createNewFile()) {
                 // Repopulate file using default records
-                if (_DEBUG) System.out.printf("The %s configuration is missing. Creating a new file with the default configuration...", system);
+                if (_DEBUG) System.out.printf("The %s configuration is missing. Creating a new file with the default configuration...\n", system);
                 try {
                     FileWriter writer = new FileWriter(configFile);
                     for (String key : defaultConfigData.keySet()) {
@@ -88,7 +88,7 @@ public class Core {
                     }
                     writer.close();
                 } catch (Exception ex) {
-                    if (_DEBUG) System.out.printf("The %s configuration file could not be created.", system);
+                    if (_DEBUG) System.out.printf("The %s configuration file could not be created.\n", system);
                 }
             } else {
                 // Load file and patch missing data with default records
@@ -99,12 +99,12 @@ public class Core {
                         String[] parts = reader.nextLine().split("=");
                         String value = "";
                         for (int i = 1; i < parts.length; i++) {
-                            value += i == 1 ? "" : "=" + parts[i].replace('\\', '/');
+                            value += (i == 1 ? "" : "=") + parts[i].replace('\\', '/');
                         }
                         configData.put(parts[0], value + (parts[0].startsWith("DIR_") && !value.endsWith("/") ? "/" : ""));
                     }
                     reader.close();
-                    FileWriter writer = new FileWriter(configFile);
+                    FileWriter writer = new FileWriter(configFile, true);
                     for (String key : defaultConfigData.keySet()) {
                         if (!configData.containsKey(key) || configData.get(key).isEmpty()) {
                             writer.write(String.format("%s=%s\n", key, defaultConfigData.get(key)));
@@ -113,7 +113,7 @@ public class Core {
                     }
                     writer.close();
                 } catch (Exception ex) {
-                    if (_DEBUG) System.out.printf("The %s configuration file could not be accessed.", system);
+                    if (_DEBUG) System.out.printf("The %s configuration file could not be accessed.\n", system);
                 }
             }
         } else {
@@ -132,20 +132,19 @@ public class Core {
             String dbDir = dir + configData.get("DIR_DATABASE");
             URL dbURL = ClassLoader.getSystemResource(dbDir);
             if (dbURL == null && !(new File(root + dbDir).mkdir())) {
-                throw new Exception(String.format("The %s directory could not be either accessed or created.", dbDir));
+                throw new Exception(String.format("The %s directory could not be either accessed or created.\n", dbDir));
             } else {
                 // Verify all data files are in place
                 String dataPath;
-                URL dataURL;
                 for (String key : configData.keySet()) {
                     if (key.startsWith("FILE_DATA_")) {
                         if (key.contains("/")) {
-                            throw new Exception(String.format("The %s data files must be located in the %s directory.", system, dbDir));
+                            throw new Exception(String.format("The %s data files must be located in the %s directory.\n", system, dbDir));
                         } else {
                             dataPath = dbDir + configData.get(key);
                             File dataFile = new File(root + dataPath);
                             if (!dataFile.exists() && !dataFile.createNewFile()) {
-                                throw new Exception(String.format("The %s data file could not be either accessed or created.", dataPath));
+                                throw new Exception(String.format("The %s data file could not be either accessed or created.\n", dataPath));
                             }
                         }
                     }

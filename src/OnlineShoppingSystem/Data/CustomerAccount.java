@@ -24,13 +24,22 @@ public class CustomerAccount implements DataObject {
     // Constructors
     public CustomerAccount(String username, String password, String name, String address, String creditCard, boolean isPremium, boolean premPaid) {
         customerID = 0;
-        this.username = username.substring(0, usernameLength);
-        this.password = password.substring(0, passwordLength);
-        this.name = name.substring(0, nameLength);
-        this.address = address.substring(0, addressLength);
-        this.creditCard = creditCard.substring(0, creditCardLength);
+        this.username = username.substring(0, Math.min(username.length(), usernameLength));
+        this.password = password.substring(0, Math.min(password.length(), passwordLength));
+        this.name = name.substring(0, Math.min(name.length(), nameLength));
+        this.address = address.substring(0, Math.min(address.length(), addressLength));
+        this.creditCard = creditCard.substring(0, Math.min(creditCard.length(), creditCardLength));
         this.isPremium = isPremium;
         this.premPaid = premPaid;
+    }
+    public CustomerAccount(int id) throws Exception {
+        byte[] data = DataManager.read(this, id);
+        if (data != null) {
+            fill(data);
+            if (id() != id) {
+                fill(new byte[recordLength()]);
+            }
+        }
     }
     public CustomerAccount() { }
     // Class-Specific Attribute Methods
@@ -50,12 +59,12 @@ public class CustomerAccount implements DataObject {
     // DataObject Method Overrides
     public void fill(byte[] record) {
         int i = 0;
-        customerID = DataManager.decodeInt(Arrays.copyOfRange(record, i, (i += 4) - 1));
-        username = DataManager.decodeString(Arrays.copyOfRange(record, i, (i += usernameLength * 4) - 1));
-        password = DataManager.decodeString(Arrays.copyOfRange(record, i, (i += passwordLength * 4) - 1));
-        name = DataManager.decodeString(Arrays.copyOfRange(record, i, (i += nameLength * 4) - 1));
-        address = DataManager.decodeString(Arrays.copyOfRange(record, i, (i += addressLength * 4) - 1));
-        creditCard = DataManager.decodeString(Arrays.copyOfRange(record, i, (i += creditCardLength * 4) - 1));
+        customerID = DataManager.decodeInt(Arrays.copyOfRange(record, i, i += 4));
+        username = DataManager.decodeString(Arrays.copyOfRange(record, i, i += usernameLength * 4));
+        password = DataManager.decodeString(Arrays.copyOfRange(record, i, i += passwordLength * 4));
+        name = DataManager.decodeString(Arrays.copyOfRange(record, i, i += nameLength * 4));
+        address = DataManager.decodeString(Arrays.copyOfRange(record, i, i += addressLength * 4));
+        creditCard = DataManager.decodeString(Arrays.copyOfRange(record, i, i += creditCardLength * 4));
         isPremium = record[i++] != 0;
         premPaid = record[i] != 0;
     }
@@ -63,24 +72,55 @@ public class CustomerAccount implements DataObject {
     public void setID(int id) { customerID = id; }
     public int recordLength() { return recordLength; }
     public byte[] serialize() {
-        int i, l;
         ByteBuffer serial = ByteBuffer.allocate(recordLength);
-        serial.put(DataManager.encode(customerID), i = 0, l = 4);
-        serial.put(DataManager.encode(username, usernameLength), i += l, l = usernameLength * 4);
-        serial.put(DataManager.encode(password, passwordLength), i += l, l = passwordLength * 4);
-        serial.put(DataManager.encode(name, nameLength), i += l, l = nameLength * 4);
-        serial.put(DataManager.encode(address, addressLength), i += l, l = addressLength * 4);
-        serial.put(DataManager.encode(creditCard, creditCardLength), i += l, l = creditCardLength * 4);
-        serial.put(i += l, isPremium ? (byte)1 : 0);
-        serial.put(++i, premPaid ? (byte)1 : 0);
+        serial.put(DataManager.encode(customerID), 0, 4);
+        serial.put(DataManager.encode(username, usernameLength), 0, usernameLength * 4);
+        serial.put(DataManager.encode(password, passwordLength), 0, passwordLength * 4);
+        serial.put(DataManager.encode(name, nameLength), 0, nameLength * 4);
+        serial.put(DataManager.encode(address, addressLength), 0, addressLength * 4);
+        serial.put(DataManager.encode(creditCard, creditCardLength), 0, creditCardLength * 4);
+        serial.put(recordLength - 2, isPremium ? (byte)1 : 0);
+        serial.put(recordLength - 1, premPaid ? (byte)1 : 0);
         return serial.array();
     }
     public String dataFile() { return dataFile; }
+    public String stringify() {
+        return String.format(
+            "Customer ID: %d\n" +
+            "Username: %s\n" +
+            "Password: %s\n" +
+            "Name: %s\n" +
+            "Address: %s\n" +
+            "Credit Card: %s\n" +
+            "Is Premium: %s\n" +
+            "Premium Paid?: %s\n",
+            customerID,
+            username,
+            password,
+            name,
+            address,
+            creditCard,
+            isPremium ? "Yes" : "No",
+            premPaid ? "Yes" : "No");
+    }
     // DataObject-Dependent Methods
     public boolean create() throws Exception { return DataManager.create(this); }
     public boolean update() throws Exception { return DataManager.update(this, customerID); }
     public boolean delete() throws Exception { return DataManager.delete(this, customerID); }
     // Static Methods
+    public static void showAll() throws Exception {
+        CustomerAccount record = new CustomerAccount();
+        ArrayList<byte[]> accounts;
+        int batchStart = 0,
+                batchSize = 100;
+        while ((accounts = DataManager.read(record, batchStart, batchSize)).size() > 0) {
+            batchStart += batchSize;
+            for (byte[] account : accounts) {
+                record.fill(account);
+                System.out.println(record.stringify());
+            }
+        }
+    }
     public static CustomerAccount Login(String username, String password) throws Exception {
         boolean exists = false;
         CustomerAccount account = null,
