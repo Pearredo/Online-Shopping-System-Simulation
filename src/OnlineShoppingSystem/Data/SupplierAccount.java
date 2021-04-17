@@ -18,9 +18,9 @@ public class SupplierAccount implements DataObject {
     // Constructors
     public SupplierAccount(String username, String password, String name) {
         supplierID = 0;
-        this.username = username.substring(0, usernameLength);
-        this.password = password.substring(0, passwordLength);
-        this.name = name.substring(0, nameLength);
+        this.username = username.substring(0, Math.min(username.length(), usernameLength));
+        this.password = password.substring(0, Math.min(password.length(), passwordLength));
+        this.name = name.substring(0, Math.min(name.length(), nameLength));
     }
     public SupplierAccount(int id) throws Exception {
         byte[] data = DataManager.read(this, id);
@@ -37,7 +37,7 @@ public class SupplierAccount implements DataObject {
     public String getUsername() { return username; }
     public String getPassword() { return password; }
     public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public void setName(String name) { this.name = name.substring(0, Math.min(name.length(), nameLength)); }
     // DataObject Method Overrides
     public void fill(byte[] record) {
         int i = 0;
