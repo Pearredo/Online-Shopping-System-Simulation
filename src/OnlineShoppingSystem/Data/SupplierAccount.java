@@ -44,7 +44,7 @@ public class SupplierAccount implements DataObject {
         supplierID = DataManager.decodeInt(Arrays.copyOfRange(record, i, i += 4));
         username = DataManager.decodeString(Arrays.copyOfRange(record, i, i += usernameLength * 4));
         password = DataManager.decodeString(Arrays.copyOfRange(record, i, i += passwordLength * 4));
-        name = DataManager.decodeString(Arrays.copyOfRange(record, i, nameLength * 4));
+        name = DataManager.decodeString(Arrays.copyOfRange(record, i, i + nameLength * 4));
     }
     public int id() { return supplierID; }
     public void setID(int id) { supplierID = id; }
@@ -78,7 +78,7 @@ public class SupplierAccount implements DataObject {
         SupplierAccount record = new SupplierAccount();
         ArrayList<byte[]> accounts;
         int batchStart = 0,
-                batchSize = 100;
+            batchSize = 100;
         while ((accounts = DataManager.read(record, batchStart, batchSize)).size() > 0) {
             batchStart += batchSize;
             for (byte[] account : accounts) {
@@ -143,5 +143,9 @@ public class SupplierAccount implements DataObject {
             }
         }
         return suppliers;
+    }
+
+    public Object get() {
+        return null;
     }
 }
