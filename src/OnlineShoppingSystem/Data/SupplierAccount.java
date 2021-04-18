@@ -144,4 +144,8 @@ public class SupplierAccount implements DataObject {
         }
         return suppliers;
     }
+
+    public Object get() {
+        return null;
+    }
 }
