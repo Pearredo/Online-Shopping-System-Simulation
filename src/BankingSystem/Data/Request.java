@@ -106,7 +106,7 @@ public class Request implements DataObject {
                 batchStart += batchSize;
                 for (byte[] account : accounts) {
                     temp.fill(account);
-                    if (temp.getCreditCard().equals(creditCard)) {
+                    if (temp.getCreditCard().trim().equals(creditCard)) {
                         accountID = temp.id();
                         break;
                     }

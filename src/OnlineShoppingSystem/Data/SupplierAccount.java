@@ -98,8 +98,8 @@ public class SupplierAccount implements DataObject {
             batchStart += batchSize;
             for (byte[] record : accounts) {
                 temp.fill(record);
-                if (exists = temp.getUsername().equals(username)) {
-                    if (temp.getPassword().equals(password)) {
+                if (exists = temp.getUsername().trim().equals(username)) {
+                    if (temp.getPassword().trim().equals(password)) {
                         account = temp;
                     } else {
                         account = new SupplierAccount(username, password, "");
