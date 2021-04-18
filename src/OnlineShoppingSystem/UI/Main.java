@@ -15,6 +15,7 @@ import javax.xml.soap.Text;
 import java.util.HashMap;
 
 public class Main extends Application {
+    CustomerAccount Customer;
     @Override
     public void start(Stage primaryStage) throws Exception {
         //first scene
@@ -42,6 +43,10 @@ public class Main extends Application {
                 scene.setRoot(ConsumerMenu);
             }
         });
+
+        Label welcome = new Label();
+        VBox MainCustomerMenu = new VBox(welcome);
+
         //Customer Log in Screen
         Label login_label = new Label("Please enter your customer log in information:");
         Label user_textbox_label = new Label("Username:");
@@ -55,6 +60,20 @@ public class Main extends Application {
             @Override
             public void handle(ActionEvent event) {
                 scene.setRoot(Customer_login_scene);
+            }
+        });
+        customer_login_button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+
+                try {
+                    Customer = CustomerAccount.Login(user_textbox.getText(), password_textbox.getText());
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                welcome.setText("Welcome "+ Customer.getName());
+                scene.setRoot(MainCustomerMenu);
             }
         });
         //Customer Register Account Screen
@@ -80,12 +99,11 @@ public class Main extends Application {
                 scene.setRoot(customer_register_scene);
             }
         });
-        Label welcome = new Label();
-        VBox MainCustomerMenu = new VBox(welcome);
+
         customer_reg_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                CustomerAccount Customer = new CustomerAccount(reg_user_textbox.getText(), reg_pass_textbox.getText(), reg_name.getText(), reg_customer_addr.getText(),reg_customer_cc.getText(), false, false);
+                Customer = new CustomerAccount(reg_user_textbox.getText(), reg_pass_textbox.getText(), reg_name.getText(), reg_customer_addr.getText(),reg_customer_cc.getText(), false, false);
                 try{
                     Customer.create();
                 }catch (Exception e){
