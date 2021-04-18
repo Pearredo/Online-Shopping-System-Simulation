@@ -45,7 +45,10 @@ public class Main extends Application {
         });
 
         Label welcome = new Label();
-        VBox MainCustomerMenu = new VBox(welcome);
+        Button selectItem = new Button("Select item from store");
+        Button viewInvoice = new Button("View Invoice");
+        Button customer_logout= new Button("Log out");
+        VBox MainCustomerMenu = new VBox(welcome,selectItem,viewInvoice,customer_logout);
 
         //Customer Log in Screen
         Label login_label = new Label("Please enter your customer log in information:");
@@ -111,6 +114,14 @@ public class Main extends Application {
                 }
                 welcome.setText("Welcome "+ Customer.getName());
                 scene.setRoot(MainCustomerMenu);
+            }
+        });
+
+        customer_logout.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                scene.setRoot(ConsumerMenu);
+                Customer = null;
             }
         });
 
