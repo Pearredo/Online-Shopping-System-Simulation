@@ -4,34 +4,87 @@ import Core.Buffer;
 import javafx.application.Application;
 import javafx.event.*;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+
+import javax.xml.soap.Text;
 import java.util.HashMap;
 
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Label text1 = new Label("hi this is a UI page");
-        Button button1 = new Button("Click me!");
-        Button button2 = new Button("Click me too!");
-        Label text2 = new Label("hi this is a different UI page");
-        VBox vbox1 = new VBox(new Label("Header"), text1, button1, new Label("Footer"));
-        VBox vbox2 = new VBox(new Label("Header"), text2, button2, new Label("Footer"));
-        Scene scene = new Scene(vbox1, 300, 275);
-        button1.setOnAction(new EventHandler<ActionEvent>() {
+        //first scene
+        Label Title1 = new Label("Are you a Customer or a Supplier");
+        Button supplier_button = new Button("Supplier");
+        Button customer_button = new Button("Customer");
+        HBox header = new HBox (Title1);
+        HBox button_holder = new HBox(customer_button, supplier_button);
+        VBox vbox1 = new VBox(header, button_holder);
+        vbox1.setAlignment(Pos.CENTER);
+
+        //scene
+        Scene scene = new Scene(vbox1, 1280, 720);
+
+
+
+        //Customer Scene
+        Button customer_login = new Button("Log in");
+        Button customer_register = new Button("Register");
+        HBox customer_button_holder = new HBox(customer_login, customer_register);
+        VBox ConsumerMenu = new VBox(new Label("Welcome Customer"),new Label("Would you like to Log in or register for a customer account?:"),customer_button_holder);
+        customer_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                scene.setRoot(vbox2);
+                scene.setRoot(ConsumerMenu);
             }
         });
-        button2.setOnAction(new EventHandler<ActionEvent>() {
+        //Customer Log in Screen
+        Label login_label = new Label("Please enter your customer log in information:");
+        Label user_textbox_label = new Label("Username:");
+        TextField user_textbox = new TextField();
+        Label password_label = new Label("Password:");
+        TextField password_textbox = new TextField();
+        HBox user_login_interface = new HBox(user_textbox_label, user_textbox, password_label, password_textbox);
+        Button customer_login_button = new Button("Log in");
+        VBox Customer_login_scene = new VBox(login_label, user_login_interface, customer_login_button);
+        customer_login.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                scene.setRoot(vbox1);
+                scene.setRoot(Customer_login_scene);
             }
         });
+        //Customer Register Account Screen
+        Label customer_register_label = new Label("Please enter your intended Username and Password:");
+        Label reg_user_textbox_label = new Label("Username:");
+        TextField reg_user_textbox = new TextField();
+        Label reg_pass_textbox_label = new Label("Password:");
+        TextField reg_pass_textbox = new TextField();
+        HBox user_reg_interface = new HBox(reg_user_textbox_label, reg_user_textbox, reg_pass_textbox_label, reg_pass_textbox);
+        Button customer_reg_button = new Button("Register");
+        VBox customer_register_scene = new VBox(customer_register_label, user_reg_interface,customer_reg_button);
+        customer_register.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                scene.setRoot(customer_register_scene);
+            }
+        });
+
+        //Supplier Scene
+        Label supplier_welcome_label = new Label("Welcome Supplier, would you like to log in or register?");
+        Button sup_login = new Button("log in");
+        Button sup_reg = new Button("Register");
+        HBox sup_wel_buttons = new HBox(sup_login, sup_reg);
+        VBox SupplierMenu = new VBox(supplier_welcome_label,sup_wel_buttons);
+        supplier_button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                scene.setRoot(SupplierMenu);
+            }
+        });
+
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(scene);
         primaryStage.show();
