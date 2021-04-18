@@ -80,7 +80,8 @@ public class Main extends Application {
                 scene.setRoot(customer_register_scene);
             }
         });
-
+        Label welcome = new Label();
+        VBox MainCustomerMenu = new VBox(welcome);
         customer_reg_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -90,6 +91,8 @@ public class Main extends Application {
                 }catch (Exception e){
                     System.out.println("Failed to create customer account: " + e.toString());
                 }
+                welcome.setText("Welcome "+ Customer.getName());
+                scene.setRoot(MainCustomerMenu);
             }
         });
 
