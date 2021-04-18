@@ -1,5 +1,6 @@
 package OnlineShoppingSystem.UI;
 
+import OnlineShoppingSystem.Data.*;
 import Core.Buffer;
 import javafx.application.Application;
 import javafx.event.*;
@@ -58,17 +59,37 @@ public class Main extends Application {
         });
         //Customer Register Account Screen
         Label customer_register_label = new Label("Please enter your intended Username and Password:");
-        Label reg_user_textbox_label = new Label("Username:");
+        Label reg_user_textbox_label = new Label("Username:\t");
         TextField reg_user_textbox = new TextField();
-        Label reg_pass_textbox_label = new Label("Password:");
+        Label reg_pass_textbox_label = new Label("Password:\t");
         TextField reg_pass_textbox = new TextField();
         HBox user_reg_interface = new HBox(reg_user_textbox_label, reg_user_textbox, reg_pass_textbox_label, reg_pass_textbox);
+        Label reg_customer_name_label = new Label("Full Name:\t");
+        TextField reg_name = new TextField();
+        Label reg_customer_addr_label = new Label("Address:\t");
+        TextField reg_customer_addr = new TextField();
+        HBox user_reg_interface1 = new HBox(reg_customer_name_label,reg_name,reg_customer_addr_label,reg_customer_addr);
+        Label reg_customer_CC_Label = new Label("Credit Card Number:\t");
+        TextField reg_customer_cc = new TextField();
+        HBox reg_interface2 = new HBox(reg_customer_CC_Label, reg_customer_cc);
         Button customer_reg_button = new Button("Register");
-        VBox customer_register_scene = new VBox(customer_register_label, user_reg_interface,customer_reg_button);
+        VBox customer_register_scene = new VBox(customer_register_label, user_reg_interface, user_reg_interface1, reg_interface2,customer_reg_button);
         customer_register.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 scene.setRoot(customer_register_scene);
+            }
+        });
+
+        customer_reg_button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                CustomerAccount Customer = new CustomerAccount(reg_user_textbox.getText(), reg_pass_textbox.getText(), reg_name.getText(), reg_customer_addr.getText(),reg_customer_cc.getText(), false, false);
+                try{
+                    Customer.create();
+                }catch (Exception e){
+                    System.out.println("Failed to create customer account: " + e.toString());
+                }
             }
         });
 
