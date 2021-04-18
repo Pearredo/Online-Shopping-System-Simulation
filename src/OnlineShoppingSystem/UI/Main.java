@@ -23,7 +23,7 @@ public class Main extends Application {
         HBox header = new HBox (Title1);
         HBox button_holder = new HBox(customer_button, supplier_button);
         VBox vbox1 = new VBox(header, button_holder);
-        vbox1.setAlignment(Pos.CENTER);
+        vbox1.setAlignment(Pos.BASELINE_CENTER);
 
         //scene
         Scene scene = new Scene(vbox1, 1280, 720);
@@ -85,7 +85,39 @@ public class Main extends Application {
             }
         });
 
-        primaryStage.setTitle("Hello World");
+        //Supplier Login scene
+        Label supplier_login_label = new Label("Please enter your supplier log in information");
+        Label sup_user_label = new Label("Username:");
+        TextField sup_user = new TextField();
+        Label sup_pass_label = new Label("Password:");
+        TextField sup_pass = new TextField();
+        HBox sup_login_interface = new HBox(sup_user_label, sup_user, sup_pass_label, sup_pass);
+        Button sup_login_button = new Button("Login");
+        VBox sup_login_scene = new VBox(supplier_login_label, sup_login_interface, sup_login_button);
+        sup_login.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                scene.setRoot(sup_login_scene);
+            }
+        });
+        //Supplier registration scene
+        Label supplier_registration_label = new Label("Please enter your intended log in information:");
+        Label sup_reg_user_label = new Label("Username:");
+        TextField reg_sup_user = new TextField();
+        Label sup_reg_pass_label = new Label("Password:");
+        TextField sup_reg_pass = new TextField();
+        HBox sup_reg_interface = new HBox(sup_reg_user_label, reg_sup_user, sup_reg_pass_label, sup_reg_pass);
+        Button sup_reg_button = new Button("Register");
+        VBox sup_reg_scene = new VBox(supplier_registration_label, sup_reg_interface, sup_reg_button);
+        sup_reg.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                scene.setRoot(sup_reg_scene);
+            }
+        });
+
+        //runs the scene
+        primaryStage.setTitle("Online Shopping System");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
