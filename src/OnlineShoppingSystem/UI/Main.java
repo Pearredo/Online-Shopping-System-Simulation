@@ -63,12 +63,13 @@ public class Main extends Application {
                 scene.setRoot(Customer_login_scene);
             }
         });
+        TextField finalUser_textbox = user_textbox;
         customer_login_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
 
                 try {
-                    Customer = CustomerAccount.Login(user_textbox.getText(), password_textbox.getText());
+                    Customer = CustomerAccount.Login(finalUser_textbox.getText(), password_textbox.getText());
 
                 } catch (Exception e) {
                     e.printStackTrace();
