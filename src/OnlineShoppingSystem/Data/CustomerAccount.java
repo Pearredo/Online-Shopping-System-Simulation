@@ -104,7 +104,23 @@ public class CustomerAccount implements DataObject {
             premPaid ? "Yes" : "No");
     }
     // DataObject-Dependent Methods
-    public boolean create() throws Exception { return DataManager.create(this); }
+    public boolean create() throws Exception {
+        boolean exists = false;
+        CustomerAccount account = new CustomerAccount();
+        ArrayList<byte[]> accounts;
+        int batchStart = 0,
+            batchSize = 100;
+        while (!exists && (accounts = DataManager.read(account, batchStart, batchSize)).size() > 0) {
+            batchStart += batchSize;
+            for (byte[] record : accounts) {
+                account.fill(record);
+                if (exists = account.getUsername().trim().equals(username)) {
+                    break;
+                }
+            }
+        }
+        return !exists && DataManager.create(this);
+    }
     public boolean update() throws Exception { return DataManager.update(this, customerID); }
     public boolean delete() throws Exception { return DataManager.delete(this, customerID); }
     // Static Methods
@@ -135,8 +151,6 @@ public class CustomerAccount implements DataObject {
                 if (exists = temp.getUsername().trim().equals(username)) {
                     if (temp.getPassword().trim().equals(password)) {
                         account = temp;
-                    } else {
-                        account = new CustomerAccount(username, password, "", "", "", false, false);
                     }
                     break;
                 }
