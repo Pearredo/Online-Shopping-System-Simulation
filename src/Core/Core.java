@@ -39,7 +39,11 @@ class SystemThread extends Thread {
             }
         } catch (Exception ex) {
             // Do any mandatory cleanup/error recovery here...
-            System.out.printf("An unexpected error occurred while running the %s module.\n", module);
+            System.out.printf(
+                "An unexpected error occurred while running the %s module%s.\n",
+                module,
+                Core._DEBUG ? ":\n\n" + ex.toString() : "");
+            if (Core._DEBUG) ex.printStackTrace();
         } finally {
             synchronized (this) { notify(); }
         }

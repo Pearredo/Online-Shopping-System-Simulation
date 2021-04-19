@@ -44,7 +44,7 @@ public class SupplierAccount implements DataObject {
         supplierID = DataManager.decodeInt(Arrays.copyOfRange(record, i, i += 4));
         username = DataManager.decodeString(Arrays.copyOfRange(record, i, i += usernameLength * 4));
         password = DataManager.decodeString(Arrays.copyOfRange(record, i, i += passwordLength * 4));
-        name = DataManager.decodeString(Arrays.copyOfRange(record, i, nameLength * 4));
+        name = DataManager.decodeString(Arrays.copyOfRange(record, i, i + nameLength * 4));
     }
     public int id() { return supplierID; }
     public void setID(int id) { supplierID = id; }
@@ -70,7 +70,23 @@ public class SupplierAccount implements DataObject {
             name);
     }
     // DataObject-Dependent Methods
-    public boolean create() throws Exception { return DataManager.create(this); }
+    public boolean create() throws Exception {
+        boolean exists = false;
+        SupplierAccount account = new SupplierAccount();
+        ArrayList<byte[]> accounts;
+        int batchStart = 0,
+            batchSize = 100;
+        while (!exists && (accounts = DataManager.read(account, batchStart, batchSize)).size() > 0) {
+            batchStart += batchSize;
+            for (byte[] record : accounts) {
+                account.fill(record);
+                if (exists = account.getUsername().trim().equals(username)) {
+                    break;
+                }
+            }
+        }
+        return !exists && DataManager.create(this);
+    }
     public boolean update() throws Exception { return DataManager.update(this, supplierID); }
     public boolean delete() throws Exception { return DataManager.delete(this, supplierID); }
     // Static Methods
@@ -78,7 +94,7 @@ public class SupplierAccount implements DataObject {
         SupplierAccount record = new SupplierAccount();
         ArrayList<byte[]> accounts;
         int batchStart = 0,
-                batchSize = 100;
+            batchSize = 100;
         while ((accounts = DataManager.read(record, batchStart, batchSize)).size() > 0) {
             batchStart += batchSize;
             for (byte[] account : accounts) {
@@ -101,8 +117,6 @@ public class SupplierAccount implements DataObject {
                 if (exists = temp.getUsername().trim().equals(username)) {
                     if (temp.getPassword().trim().equals(password)) {
                         account = temp;
-                    } else {
-                        account = new SupplierAccount(username, password, "");
                     }
                     break;
                 }
@@ -143,5 +157,9 @@ public class SupplierAccount implements DataObject {
             }
         }
         return suppliers;
+    }
+
+    public Object get() {
+        return null;
     }
 }
