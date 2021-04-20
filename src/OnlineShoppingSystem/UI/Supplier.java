@@ -3,10 +3,13 @@ package OnlineShoppingSystem.UI;
 import OnlineShoppingSystem.Data.*;
 import javafx.event.*;
 import javafx.geometry.*;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Supplier {
     public static void loadSupplierIntro() {
@@ -126,6 +129,22 @@ public class Supplier {
     }
     public static void loadSupplierMenu() {
         Label welcome = new Label("Welcome " + Main.supplier.getName());
+        Button stockManager = new Button("Manage Stock");
+        stockManager.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Main.resubmit = false;
+                loadSupplierStockMenu();
+            }
+        });
+        Button orderManager = new Button("Fill Open Orders");
+        orderManager.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Main.resubmit = false;
+                loadSupplierOrders();
+            }
+        });
         Button logout = new Button("Logout");
         logout.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -134,6 +153,235 @@ public class Supplier {
                 loadSupplierLogin();
             }
         });
-        Main.scene.setRoot(new VBox(welcome, logout));
+        Main.scene.setRoot(new VBox(welcome, stockManager, orderManager, logout));
+    }
+    public static void loadSupplierStockMenu() {
+        ArrayList<Item> items = new ArrayList<>();
+        boolean itemsLoaded = false;
+        try {
+            items = Item.getItems(Main.supplier.id());
+            itemsLoaded = true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        Label header = new Label("Stock Management");
+        Button newItem = new Button("Add New Item");
+        newItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Main.resubmit = false;
+                loadSupplierItemCreate();
+            }
+        });
+        Label curItems = new Label("Current Items");
+        Label notice = new Label();
+        if (itemsLoaded && items.size() < 1) {
+            notice.setText("You are not currently providing any items. Please add new items.");
+        } else if (Main.resubmit) {
+            notice.setText("Your items were unable to be loaded. Please refresh this page.");
+            notice.setTextFill(Color.color(.85f, 0, 0));
+        }
+        Node[] itemOptions = new Node[items.size()];
+        for (int i = 0; i < items.size(); i++) {
+            int id = items.get(i).id();
+            Label iLabel = new Label(items.get(i).getItemName());
+            Button iButton = new Button("Edit");
+            iButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    Main.resubmit = false;
+                    loadSupplierItemEdit(id);
+                }
+            });
+            itemOptions[i] = new HBox(
+                5f,
+                iLabel,
+                iButton
+            );
+        }
+        Button back_button = new Button("Back");
+        back_button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Main.resubmit = false;
+                loadSupplierMenu();
+            }
+        });
+        Main.scene.setRoot(new VBox(
+            header,
+            newItem,
+            notice,
+            curItems,
+            new VBox(itemOptions),
+            back_button));
+    }
+    public static void loadSupplierItemCreate() {
+        Label header = new Label("Creating a New Item"),
+            name_label = new Label("Item Name: "),
+            desc_label = new Label("Item Description: "),
+            regCost_label = new Label("Item Regular Cost: "),
+            premCost_label = new Label("Item Premium Cost: "),
+            qty_label = new Label("Item Quantity: ");
+        TextField name = new TextField(),
+            desc = new TextField(),
+            regCost = new TextField(),
+            premCost = new TextField(),
+            qty = new TextField();
+        Button post = new Button("Add Item");
+        post.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Item item = new Item(
+                    Main.supplier.id(),
+                    name.getText(),
+                    desc.getText(),
+                    Float.parseFloat(regCost.getText()),
+                    Float.parseFloat(premCost.getText()),
+                    Integer.parseInt(qty.getText()));
+                Main.resubmit = true;
+                try {
+                    Main.resubmit = !item.create();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                loadSupplierStockMenu();
+            }
+        });
+        Button back = new Button("Back");
+        back.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Main.resubmit = false;
+                loadSupplierStockMenu();
+            }
+        });
+        Main.scene.setRoot(new VBox(
+            header,
+            new HBox(5f, name_label, name),
+            new HBox(5f, desc_label, desc),
+            new HBox(5f, regCost_label, regCost),
+            new HBox(5f, premCost_label, premCost),
+            new HBox(5f, qty_label, qty),
+            post,
+            back));
+    }
+    public static void loadSupplierItemEdit(int id) {
+        Item item = null;
+        try {
+            item = Item.getItem(id);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        if (item == null) {
+            Main.resubmit = true;
+            loadSupplierMenu();
+        } else {
+            final Item curItem = item;
+            Label header = new Label("Creating a New Item"),
+                name_label = new Label("Item Name: " + item.getItemName()),
+                desc_label = new Label("Item Description: "),
+                regCost_label = new Label("Item Regular Cost: "),
+                premCost_label = new Label("Item Premium Cost: "),
+                qty_label = new Label("Item Quantity: ");
+            TextField desc = new TextField(curItem.getItemDesc()),
+                regCost = new TextField(String.valueOf(curItem.getItemRegCost())),
+                premCost = new TextField(String.valueOf(curItem.getItemPremCost())),
+                qty = new TextField(String.valueOf(curItem.getItemQty()));
+            Button post = new Button("Update Item");
+            post.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    curItem.setItemDesc(desc.getText());
+                    curItem.setItemRegCost(Float.parseFloat(regCost.getText()));
+                    curItem.setItemPremCost(Float.parseFloat(premCost.getText()));
+                    curItem.setItemQty(Integer.parseInt(qty.getText()));
+                    Main.resubmit = true;
+                    try {
+                        Main.resubmit = !curItem.update();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    loadSupplierStockMenu();
+                }
+            });
+            Button back = new Button("Back");
+            back.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    Main.resubmit = false;
+                    loadSupplierStockMenu();
+                }
+            });
+            Main.scene.setRoot(new VBox(
+                header,
+                name_label,
+                new HBox(5f, desc_label, desc),
+                new HBox(5f, regCost_label, regCost),
+                new HBox(5f, premCost_label, premCost),
+                new HBox(5f, qty_label, qty),
+                post,
+                back));
+        }
+    }
+    public static void loadSupplierOrders() {
+        ArrayList<Item> items = new ArrayList<>();
+        HashMap<Integer, Item> itemRef = new HashMap<>();
+        ArrayList<OrderItem> orderItems = new ArrayList<>();
+        try {
+            items = Item.getItems(Main.supplier.id());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        for (Item item : items) {
+            itemRef.put(item.id(), item);
+            ArrayList<OrderItem> itemOrders = new ArrayList<>();
+            try {
+                itemOrders = OrderItem.getOrderItems(item.id(), 'i');
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            orderItems.addAll(itemOrders);
+        }
+        Node[] oiMenus = new Node[orderItems.size()];
+        for (int i = 0; i < orderItems.size(); i++) {
+            OrderItem orderItem = orderItems.get(i);
+            Item curItem = itemRef.get(orderItem.id());
+            Label oiName = new Label(itemRef.get(orderItem.id()).getItemName()),
+                oiQty = new Label("Stock: " + itemRef.get(orderItem.id()).getItemQty()),
+                oiReserved = new Label("Reserved: " + itemRef.get(orderItem.id()).getReservedQty());
+            Button fill = new Button("Fill and Ship");
+            fill.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    curItem.setReservedQty(curItem.getItemQty() - orderItem.getItemQty());
+                    curItem.setReservedQty(curItem.getReservedQty() - orderItem.getItemQty());
+                    try {
+                        Main.resubmit = !curItem.update();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        Main.resubmit = true;
+                    }
+                    loadSupplierOrders();
+                }
+            });
+            oiMenus[i] = new VBox(oiName, new HBox(5f, new VBox(oiQty, oiReserved), fill));
+        }
+        Label header = new Label("Managing Pending Item Orders");
+        Label error = new Label("An error has occurred while allocating stock. Please try again.");
+        error.setTextFill(Color.color(.85f, 0, 0));
+        Button back  = new Button("Back");
+        back.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Main.resubmit = false;
+                loadSupplierMenu();
+            }
+        });
+        Main.scene.setRoot(new VBox(
+            header,
+            error,
+            new VBox(oiMenus),
+            back
+        ));
     }
 }

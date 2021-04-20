@@ -42,6 +42,7 @@ public class Item implements DataObject {
     public Item() { }
     // Class-Specific Attribute Methods
     public int getSupplierID() { return supplierID; }
+    public String getItemName() { return itemName; }
     public String getItemDesc() { return itemDesc; }
     public void setItemDesc(String itemDesc) { this.itemDesc = itemDesc.substring(0, Math.min(itemDesc.length(), itemDescLength)); }
     public float getItemRegCost() { return itemRegCost; }
