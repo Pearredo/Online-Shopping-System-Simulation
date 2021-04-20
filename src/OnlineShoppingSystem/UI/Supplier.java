@@ -43,7 +43,7 @@ public class Supplier {
     public static void loadSupplierLogin() {
         Main.supplier = null;
         Label login_label = new Label("Please enter Supplier Log in information: ");
-        Label error_label = new Label(Main.resubmit ? "That username is already claimed." : "");
+        Label error_label = new Label(Main.resubmit ? "An invalid username and password were provided." : "");
         error_label.setTextFill(Color.color(.85f, 0, 0));
         Label user_textbox_label = new Label("Username: ");
         TextField user_textbox = new TextField();
@@ -207,12 +207,18 @@ public class Supplier {
                 loadSupplierMenu();
             }
         });
+        VBox allItems = new VBox(itemOptions);
+        ScrollPane itemPane = new ScrollPane(allItems);
+        itemPane.setPrefViewportHeight(Main.scene.getHeight() / 2);
+        itemPane.setPrefViewportWidth(Math.min(allItems.getWidth() * 2, Main.scene.getWidth()));
+        itemPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        itemPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         Main.scene.setRoot(new VBox(
             header,
             newItem,
             notice,
             curItems,
-            new VBox(itemOptions),
+            itemPane,
             back_button));
     }
     public static void loadSupplierItemCreate() {
@@ -382,10 +388,15 @@ public class Supplier {
                 loadSupplierMenu();
             }
         });
+        VBox allOIs = new VBox(oiMenus);
+        ScrollPane oiPane = new ScrollPane(allOIs);
+        oiPane.setPrefViewportHeight(Main.scene.getHeight() / 2);
+        oiPane.setPrefViewportWidth(Math.min(allOIs.getWidth() * 2, Main.scene.getWidth()));
+        oiPane.setPrefSize(Main.scene.getWidth(), Main.scene.getHeight() / 2);
         Main.scene.setRoot(new VBox(
             header,
             notice,
-            new VBox(oiMenus),
+            oiPane,
             back
         ));
     }
