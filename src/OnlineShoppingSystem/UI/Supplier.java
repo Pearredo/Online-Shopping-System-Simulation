@@ -367,8 +367,13 @@ public class Supplier {
             oiMenus[i] = new VBox(oiName, new HBox(5f, new VBox(oiQty, oiReserved), fill));
         }
         Label header = new Label("Managing Pending Item Orders");
-        Label error = new Label("An error has occurred while allocating stock. Please try again.");
-        error.setTextFill(Color.color(.85f, 0, 0));
+        Label notice = new Label();
+        if (orderItems.size() < 1) {
+            notice.setText("There are no pending orders for your inventory.");
+        } else if (Main.resubmit) {
+            notice.setText("An error has occurred while allocating stock. Please try again.");
+            notice.setTextFill(Color.color(.85f, 0, 0));
+        }
         Button back  = new Button("Back");
         back.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -379,7 +384,7 @@ public class Supplier {
         });
         Main.scene.setRoot(new VBox(
             header,
-            error,
+            notice,
             new VBox(oiMenus),
             back
         ));
