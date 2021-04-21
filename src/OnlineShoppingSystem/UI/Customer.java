@@ -3,6 +3,7 @@ package OnlineShoppingSystem.UI;
 import OnlineShoppingSystem.Data.*;
 import javafx.event.*;
 import javafx.geometry.*;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -195,7 +196,7 @@ public class Customer {
     public static void loadSelectItemsMenu(){
         Label Select_items_label = new Label("Please Select a store item below:");
         Button back_button = new Button("Back");
-        Label Items_Temp = new Label("");
+
         ArrayList<SupplierAccount> ItemSuppliers = new ArrayList<>();
 
         try {
@@ -204,25 +205,28 @@ public class Customer {
             e.printStackTrace();
         }
         int tmpID=0;
-        Item tmpItem = new Item();
-        ArrayList<Item> listOfItems = new ArrayList<>();
+        //tem tmpItem = new Item();
+        //ArrayList<Item> listOfItems = new ArrayList<>();
         int Supplier_Counter=ItemSuppliers.size();
+        Node[] supplier_array = new Node[Supplier_Counter];
         for(int i = 0; i < Supplier_Counter; i++){
-            tmpID = ItemSuppliers.get(i).id();
 
-            try{
-                listOfItems = Item.getItems(tmpID);
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-            for(int e =0; e < listOfItems.size(); e++){
-                Items_Temp.setText(Items_Temp.getText()+"\n"+listOfItems.get(e).stringify());
-            }
+            Button Catalog_Button = new Button(ItemSuppliers.get(i).getName());
+            HBox Catalog_UI = new HBox(Catalog_Button);
+            supplier_array[i]=Catalog_UI;
+            SupplierAccount sup = ItemSuppliers.get(i);
+            Catalog_Button.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    Main.resubmit = false;
+                    loadAddToOrder(sup);
+                }
+            });
         }
 
-        ScrollPane oiPane = new ScrollPane(Items_Temp);
+        ScrollPane oiPane = new ScrollPane(new VBox(supplier_array));
         oiPane.setPrefViewportHeight(Main.scene.getHeight());
-        oiPane.setPrefViewportWidth(Math.min(Items_Temp.getWidth() * 2, Main.scene.getWidth()));
+        oiPane.setPrefViewportWidth(Math.min(Main.scene.getWidth() * 2, Main.scene.getWidth()));
         oiPane.setPrefSize(Main.scene.getWidth(), Main.scene.getHeight());
         back_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -231,7 +235,48 @@ public class Customer {
                 loadCustomerMenu();
             }
         });
-        Main.scene.setRoot(new VBox(Select_items_label,Items_Temp, oiPane, back_button));
+        Main.scene.setRoot(new VBox(Select_items_label, oiPane, back_button));
+    }
+    public static void loadAddToOrder(SupplierAccount sup){
+        Label welcomeToStore = new Label("Welcome to "+sup.getName());
+        int supID = sup.id();
+        int itemCount=0;
+        ArrayList<Item> temp = new ArrayList<>();
+        try {
+            temp = Item.getItems(supID);
+            itemCount = temp.size();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Node[] listOfItems = new Node[itemCount];
+        for(int i = 0; i < itemCount; i++){
+            Label itemName = new Label(temp.get(i).getItemName());
+            Label itemInfo = new Label(temp.get(i).getItemDesc());
+            Label itemQuant = new Label("Only "+String.valueOf(temp.get(i).getItemQty()-temp.get(i).getReservedQty())+" left!!!");
+            Label itemPrc = new Label();
+            if(Main.customer.isPremium()){
+                itemPrc.setText("For the price of :\t"+String.valueOf(temp.get(i).getItemPremCost()));
+            }else{
+                itemPrc.setText("For the price of :\t"+String.valueOf(temp.get(i).getItemRegCost()));
+            }
+            Button storeItemsButton = new Button("Buy Now!");
+            VBox storeItem = new VBox(itemName,itemInfo,itemQuant,itemPrc,storeItemsButton);
+            listOfItems[i] = storeItem;
+        }
+        ScrollPane oiPane = new ScrollPane(new VBox(listOfItems));
+        oiPane.setPrefViewportHeight(Main.scene.getHeight());
+        oiPane.setPrefViewportWidth(Math.min(Main.scene.getWidth() * 2, Main.scene.getWidth()));
+        oiPane.setPrefSize(Main.scene.getWidth(), Main.scene.getHeight());
+
+        Button back_button = new Button("Back");
+        back_button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Main.resubmit = false;
+                loadSelectItemsMenu();
+            }
+        });
+        Main.scene.setRoot(new VBox(welcomeToStore, oiPane,back_button));
     }
     public static void loadViewOrderScreen(){
         Label View_Order_label = new Label ("Here are your current order details.");
