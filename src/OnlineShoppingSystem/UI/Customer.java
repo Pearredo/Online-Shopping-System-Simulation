@@ -8,6 +8,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
+
 public class Customer {
     public static void loadCustomerIntro() {
         Main.customer = null;
@@ -40,6 +42,7 @@ public class Customer {
             customer_button_holder,
             back_button));
     }
+    //loads the customer login screne
     public static void loadCustomerLogin() {
         Main.customer = null;
         Label login_label = new Label("Please enter your customer log in information:");
@@ -68,6 +71,7 @@ public class Customer {
                 }
             }
         });
+        //back button
         Button back_button = new Button("Back");
         back_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -78,6 +82,7 @@ public class Customer {
         });
         Main.scene.setRoot(new VBox(login_label, error_label, user_login_interface, customer_login_button, back_button));
     }
+    //creates new account
     public static void loadCustomerRegister() {
         Main.customer = null;
         Label customer_register_label = new Label("Please enter your intended Username, Password, and general information:");
@@ -97,6 +102,7 @@ public class Customer {
         TextField reg_customer_cc = new TextField();
         HBox reg_interface2 = new HBox(reg_customer_CC_Label, reg_customer_cc);
         Button customer_reg_button = new Button("Register");
+        //creates accounts when registering
         customer_reg_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -138,9 +144,16 @@ public class Customer {
             customer_reg_button,
             back_button));
     }
+    //loads customer menu
     public static void loadCustomerMenu() {
         Label welcome = new Label("Welcome " + Main.customer.getName());
+        Button Select_Items = new Button("Select Items");
+        Button View_Order = new Button("View Order");
+        Button View_Invoice = new Button("View Invoice");
+        Button Make_order = new Button("Make Order");
         Button logout = new Button("Logout");
+        HBox customer_menu_interface1 = new HBox(5f,Select_Items, Make_order);
+        HBox customer_menu_interface2 = new HBox(5f,View_Order, View_Invoice);
         logout.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -148,6 +161,112 @@ public class Customer {
                 loadCustomerLogin();
             }
         });
-        Main.scene.setRoot(new VBox(welcome, logout));
+        Select_Items.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Main.resubmit = false;
+                loadSelectItemsMenu();
+            }
+        });
+        View_Order.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Main.resubmit = false;
+                loadViewOrderScreen();
+            }
+        });
+        View_Invoice.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Main.resubmit = false;
+                loadViewInvoiceScreen();
+            }
+        });
+        Make_order.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Main.resubmit = false;
+                loadMakeOrderScreen();
+            }
+        });
+        Main.scene.setRoot(new VBox(5f,welcome, customer_menu_interface1, customer_menu_interface2, logout));
+    }
+
+    public static void loadSelectItemsMenu(){
+        Label Select_items_label = new Label("Please Select a store item below:");
+        Button back_button = new Button("Back");
+        Label Items_Temp = new Label("");
+        ArrayList<SupplierAccount> ItemSuppliers = new ArrayList<>();
+
+        try {
+            ItemSuppliers = SupplierAccount.getSuppliers();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        int tmpID=0;
+        Item tmpItem = new Item();
+        ArrayList<Item> listOfItems = new ArrayList<>();
+        int Supplier_Counter=ItemSuppliers.size();
+        for(int i = 0; i < Supplier_Counter; i++){
+            tmpID = ItemSuppliers.get(i).id();
+
+            try{
+                listOfItems = Item.getItems(tmpID);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            for(int e =0; e < listOfItems.size(); e++){
+                Items_Temp.setText(Items_Temp.getText()+"\n"+listOfItems.get(e).stringify());
+            }
+        }
+
+        ScrollPane oiPane = new ScrollPane(Items_Temp);
+        oiPane.setPrefViewportHeight(Main.scene.getHeight());
+        oiPane.setPrefViewportWidth(Math.min(Items_Temp.getWidth() * 2, Main.scene.getWidth()));
+        oiPane.setPrefSize(Main.scene.getWidth(), Main.scene.getHeight());
+        back_button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Main.resubmit = false;
+                loadCustomerMenu();
+            }
+        });
+        Main.scene.setRoot(new VBox(Select_items_label,Items_Temp, oiPane, back_button));
+    }
+    public static void loadViewOrderScreen(){
+        Label View_Order_label = new Label ("Here are your current order details.");
+        Button back_button = new Button("Back");
+        back_button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Main.resubmit = false;
+                loadCustomerMenu();
+            }
+        });
+        Main.scene.setRoot(new VBox(View_Order_label, back_button));
+    }
+    public static void loadViewInvoiceScreen(){
+        Label view_invoice_label = new Label("Here are your past orders:");
+        Button back_button = new Button("Back");
+        back_button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Main.resubmit = false;
+                loadCustomerMenu();
+            }
+        });
+        Main.scene.setRoot(new VBox(view_invoice_label, back_button));
+    }
+    public static void loadMakeOrderScreen(){
+        Label make_order_label = new Label("Here is the order you are willing to make:");
+        Button back_button = new Button("Back");
+        back_button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Main.resubmit = false;
+                loadCustomerMenu();
+            }
+        });
+        Main.scene.setRoot(new VBox(make_order_label, back_button));
     }
 }
