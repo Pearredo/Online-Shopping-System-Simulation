@@ -14,6 +14,7 @@ import java.util.ArrayList;
 public class Customer {
     public static void loadCustomerIntro() {
         Main.customer = null;
+        Main.cart = null;
         Button customer_login = new Button("Log in");
         customer_login.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -46,6 +47,7 @@ public class Customer {
     //loads the customer login screne
     public static void loadCustomerLogin() {
         Main.customer = null;
+        Main.cart = null;
         Label login_label = new Label("Please enter your customer log in information:");
         Label error_label = new Label(Main.resubmit ? "An invalid username and password were provided." : "");
         error_label.setTextFill(Color.color(.85f, 0, 0));
@@ -86,6 +88,7 @@ public class Customer {
     //creates new account
     public static void loadCustomerRegister() {
         Main.customer = null;
+        Main.cart = null;
         Label customer_register_label = new Label("Please enter your intended Username, Password, and general information:");
         Label error_label = new Label(Main.resubmit ? "That username is already claimed." : "");
         error_label.setTextFill(Color.color(.85f, 0, 0));
@@ -147,6 +150,7 @@ public class Customer {
     }
     //loads customer menu
     public static void loadCustomerMenu() {
+        Main.cart = new ArrayList<>();
         Label welcome = new Label("Welcome " + Main.customer.getName());
         Button Select_Items = new Button("Select Items");
         Button View_Order = new Button("View Order");
@@ -194,7 +198,7 @@ public class Customer {
     }
 
     public static void loadSelectItemsMenu(){
-        Label Select_items_label = new Label("Please Select a store item below:");
+        Label Select_items_label = new Label("Please select a store catalogue below:");
         Button back_button = new Button("Back");
 
         ArrayList<SupplierAccount> ItemSuppliers = new ArrayList<>();
@@ -204,9 +208,6 @@ public class Customer {
         }catch(Exception e){
             e.printStackTrace();
         }
-        int tmpID=0;
-        //tem tmpItem = new Item();
-        //ArrayList<Item> listOfItems = new ArrayList<>();
         int Supplier_Counter=ItemSuppliers.size();
         Node[] supplier_array = new Node[Supplier_Counter];
         for(int i = 0; i < Supplier_Counter; i++){
@@ -238,7 +239,7 @@ public class Customer {
         Main.scene.setRoot(new VBox(Select_items_label, oiPane, back_button));
     }
     public static void loadAddToOrder(SupplierAccount sup){
-        Label welcomeToStore = new Label("Welcome to "+sup.getName());
+        Label welcomeToStore = new Label("Welcome to the catalogue for " + sup.getName());
         int supID = sup.id();
         int itemCount=0;
         ArrayList<Item> temp = new ArrayList<>();
@@ -249,25 +250,71 @@ public class Customer {
             e.printStackTrace();
         }
         Node[] listOfItems = new Node[itemCount];
+        TextField[] buyAmounts = new TextField[itemCount];
         for(int i = 0; i < itemCount; i++){
+            int maxQty = temp.get(i).getItemQty() - temp.get(i).getReservedQty();
             Label itemName = new Label(temp.get(i).getItemName());
             Label itemInfo = new Label(temp.get(i).getItemDesc());
-            Label itemQuant = new Label("Only "+String.valueOf(temp.get(i).getItemQty()-temp.get(i).getReservedQty())+" left!!!");
+            Label itemQuant = new Label("Only "+maxQty+" left!!!");
             Label itemPrc = new Label();
             if(Main.customer.isPremium()){
-                itemPrc.setText("For the price of :\t"+String.valueOf(temp.get(i).getItemPremCost()));
+                itemPrc.setText("For the price of :\t"+temp.get(i).getItemPremCost());
             }else{
-                itemPrc.setText("For the price of :\t"+String.valueOf(temp.get(i).getItemRegCost()));
+                itemPrc.setText("For the price of :\t"+temp.get(i).getItemRegCost());
             }
-            Button storeItemsButton = new Button("Buy Now!");
-            VBox storeItem = new VBox(itemName,itemInfo,itemQuant,itemPrc,storeItemsButton);
+            Button reduce = new Button("<"),
+                increase = new Button(">");
+            TextField qty = new TextField("0");
+            buyAmounts[i] = qty;
+            reduce.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    int value;
+                    try {
+                        value = Integer.parseInt(qty.getText());
+                    } catch (Exception ex) {
+                        value = 0;
+                    }
+                    qty.setText(String.valueOf(value > 0 ? --value : 0));
+                }
+            });
+            increase.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    int value;
+                    try {
+                        value = Integer.parseInt(qty.getText());
+                    } catch (Exception ex) {
+                        value = 0;
+                    }
+                    qty.setText(String.valueOf(value > maxQty ? ++value : 0));
+                }
+            });
+            HBox buyUI = new HBox(5f, reduce, qty, increase);
+            VBox storeItem = new VBox(itemName,itemInfo,itemQuant,itemPrc,buyUI);
             listOfItems[i] = storeItem;
         }
         ScrollPane oiPane = new ScrollPane(new VBox(listOfItems));
         oiPane.setPrefViewportHeight(Main.scene.getHeight());
-        oiPane.setPrefViewportWidth(Math.min(Main.scene.getWidth() * 2, Main.scene.getWidth()));
+        oiPane.setPrefViewportWidth(Main.scene.getWidth());
         oiPane.setPrefSize(Main.scene.getWidth(), Main.scene.getHeight());
-
+        Button buyButton = new Button("Add items to cart");
+        buyButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                for (TextField qty : buyAmounts) {
+                    int value;
+                    try {
+                        value = Integer.parseInt(qty.getText());
+                    } catch (Exception ex) {
+                        value = 0;
+                    }
+                    if (value > 0) {
+                        // add item to cart
+                    }
+                }
+            }
+        });
         Button back_button = new Button("Back");
         back_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override

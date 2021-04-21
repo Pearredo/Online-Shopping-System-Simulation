@@ -353,16 +353,18 @@ public class Supplier {
             OrderItem orderItem = orderItems.get(i);
             Item curItem = itemRef.get(orderItem.id());
             Label oiName = new Label(itemRef.get(orderItem.id()).getItemName()),
-                oiQty = new Label("Stock: " + itemRef.get(orderItem.id()).getItemQty()),
-                oiReserved = new Label("Reserved: " + itemRef.get(orderItem.id()).getReservedQty());
-            Button fill = new Button("Fill and Ship");
+                oiQty = new Label(
+                    "Stock: " +
+                    (itemRef.get(orderItem.getItemID()).getItemQty()
+                        - itemRef.get(orderItem.getItemID()).getReservedQty())),
+                oiReserved = new Label("Reserved: " + orderItem.getItemQty());
+            Button fill = new Button("Fill");
             fill.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    curItem.setReservedQty(curItem.getItemQty() - orderItem.getItemQty());
-                    curItem.setReservedQty(curItem.getReservedQty() - orderItem.getItemQty());
+                    curItem.setReservedQty(curItem.getReservedQty() + orderItem.getItemQty());
                     try {
-                        Main.resubmit = !curItem.update();
+                        curItem.update();
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         Main.resubmit = true;
@@ -370,7 +372,25 @@ public class Supplier {
                     loadSupplierOrders();
                 }
             });
-            oiMenus[i] = new VBox(oiName, new HBox(5f, new VBox(oiQty, oiReserved), fill));
+            Button ship = new Button("Ship");
+            fill.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    curItem.setItemQty(curItem.getItemQty() - orderItem.getItemQty());
+                    curItem.setReservedQty(curItem.getReservedQty() - orderItem.getItemQty());
+                    try {
+                        curItem.update();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        Main.resubmit = true;
+                    }
+                    loadSupplierOrders();
+                }
+            });
+            oiMenus[i] = new VBox(oiName, new HBox(
+                5f,
+                orderItem.getOrderItemStatus() == 1 ? oiQty : oiReserved,
+                orderItem.getOrderItemStatus() == 1 ? fill : ship));
         }
         Label header = new Label("Managing Pending Item Orders");
         Label notice = new Label();
