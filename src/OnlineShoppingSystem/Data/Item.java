@@ -42,6 +42,7 @@ public class Item implements DataObject {
     public Item() { }
     // Class-Specific Attribute Methods
     public int getSupplierID() { return supplierID; }
+    public String getItemName() { return itemName; }
     public String getItemDesc() { return itemDesc; }
     public void setItemDesc(String itemDesc) { this.itemDesc = itemDesc.substring(0, Math.min(itemDesc.length(), itemDescLength)); }
     public float getItemRegCost() { return itemRegCost; }
@@ -85,7 +86,7 @@ public class Item implements DataObject {
     public String stringify() {
         return String.format(
             "Item ID: %d\n" +
-            "Supplier ID ID: %d\n" +
+            "Supplier ID: %d\n" +
             "Item Name: %s\n" +
             "Item Desc: %s\n" +
             "Item Reg Cost: %,.2f\n" +
@@ -145,7 +146,6 @@ public class Item implements DataObject {
                 temp.fill(record);
                 if (temp.getSupplierID() == supplierID) {
                     items.add(new Item(record));
-                    break;
                 }
             }
         }
