@@ -197,6 +197,7 @@ public class Customer {
         Button back_button = new Button("Back");
         Label Items_Temp = new Label("");
         ArrayList<SupplierAccount> ItemSuppliers = new ArrayList<>();
+
         try {
             ItemSuppliers = SupplierAccount.getSuppliers();
         }catch(Exception e){
@@ -217,8 +218,12 @@ public class Customer {
             for(int e =0; e < listOfItems.size(); e++){
                 Items_Temp.setText(Items_Temp.getText()+"\n"+listOfItems.get(e).stringify());
             }
-            //Items_Temp.setText(Items_Temp.getText()+"\n"+ItemSuppliers.get(i));
         }
+
+        ScrollPane oiPane = new ScrollPane(Items_Temp);
+        oiPane.setPrefViewportHeight(Main.scene.getHeight());
+        oiPane.setPrefViewportWidth(Math.min(Items_Temp.getWidth() * 2, Main.scene.getWidth()));
+        oiPane.setPrefSize(Main.scene.getWidth(), Main.scene.getHeight());
         back_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -226,7 +231,7 @@ public class Customer {
                 loadCustomerMenu();
             }
         });
-        Main.scene.setRoot(new VBox(Select_items_label,Items_Temp, back_button));
+        Main.scene.setRoot(new VBox(Select_items_label,Items_Temp, oiPane, back_button));
     }
     public static void loadViewOrderScreen(){
         Label View_Order_label = new Label ("Here are your current order details.");

@@ -46,7 +46,7 @@ public class Main extends Application {
             }
         });
         HBox header = new HBox (title1);
-        HBox button_holder = new HBox(customer_button, supplier_button);
+        HBox button_holder = new HBox(5f,customer_button, supplier_button);
         Button exit = new Button("Quit");
         exit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -55,7 +55,7 @@ public class Main extends Application {
             }
         });
         VBox menu_welcome = new VBox(header, button_holder, exit);
-        //menu_welcome.setAlignment(Pos.CENTER);
+        menu_welcome.setAlignment(Pos.BASELINE_RIGHT);
         Main.scene.setRoot(menu_welcome);
     }
     @Override
@@ -74,4 +74,3 @@ public class Main extends Application {
         launch();
     }
 }
-
