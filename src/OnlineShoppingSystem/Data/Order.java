@@ -96,7 +96,9 @@ public class Order implements DataObject {
             "Order Status: %d\n" +
             "Order Date: %d\n" +
             "Order Cost: %,.2f\n" +
+            "Prem Cost: %,.2f\n" +
             "Order Delivery: %d\n" +
+            "Delivery Cost: %,.2f\n" +
             "Invoice ID: %d\n" +
             "Purchase Auth.: %d\n",
             orderID,
@@ -104,7 +106,9 @@ public class Order implements DataObject {
             orderStatus,
             orderDate,
             orderCost,
+            premCost,
             orderDelivery,
+            deliveryCost,
             invoiceID,
             purchaseAuth);
     }

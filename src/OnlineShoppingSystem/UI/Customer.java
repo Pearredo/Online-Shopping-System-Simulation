@@ -500,7 +500,7 @@ public class Customer {
             Label view_invoice_label = new Label("Viewing invoice " + order.getInvoiceID() + " from " + date);
             ArrayList<OrderItem> orderItems = new ArrayList<>();
             try {
-                orderItems = OrderItem.getOrderItems(orderID, '0');
+                orderItems = OrderItem.getOrderItems(orderID, 'o');
             } catch (Exception ex) {
                 // do something here
             }
