@@ -72,11 +72,13 @@ public class OrderItem implements DataObject {
             "Order ID: %d\n" +
             "Item ID: %d\n" +
             "Item Qty: %d\n" +
+            "Line Cost: %,.2f\n" +
             "Order Item Status: %d\n",
             orderItemID,
             orderID,
             itemID,
             itemQty,
+            lineCost,
             orderItemStatus);
     }
     // DataObject-Dependent Methods
@@ -128,7 +130,6 @@ public class OrderItem implements DataObject {
                 temp.fill(record);
                 if (id == (mode == 'i' ? temp.getItemID() : temp.getOrderID())) {
                     items.add(new OrderItem(record));
-                    break;
                 }
             }
         }
