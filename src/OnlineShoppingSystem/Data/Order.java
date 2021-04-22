@@ -11,19 +11,23 @@ public class Order implements DataObject {
     private byte orderStatus;
     private int orderDate; // yyyyMMdd
     private float orderCost;
+    private float premCost;
     private byte orderDelivery;
+    private float deliveryCost;
     private int invoiceID;
     private long purchaseAuth;
-    private final int recordLength = 30;
+    private final int recordLength = 38;
     public String dataFile = "FILE_DATA_ORDERS";
     // Constructors
-    public Order(int customerID, byte orderStatus, int orderDate, float orderCost, byte orderDelivery) {
+    public Order(int customerID, byte orderStatus, int orderDate, float orderCost, float premCost, byte orderDelivery, float deliveryCost) {
         orderID = 0;
         this.customerID = customerID;
         this.orderStatus = orderStatus;
         this.orderDate = orderDate;
         this.orderCost = orderCost;
+        this.premCost = premCost;
         this.orderDelivery = orderDelivery;
+        this.deliveryCost = deliveryCost;
         invoiceID = 0;
         purchaseAuth = 0;
     }
@@ -46,6 +50,9 @@ public class Order implements DataObject {
     public void setOrderDate(int orderDate) { this.orderDate = orderDate; }
     public float getOrderCost() { return orderCost; }
     public void setOrderCost(float orderCost) { this.orderCost = orderCost; }
+    public float getPremCost() { return premCost; }
+    public float getOrderDelivery() { return orderDelivery; }
+    public float getDeliveryCost() { return deliveryCost; }
     public int getInvoiceID() { return invoiceID; }
     public long getPurchaseAuth() { return purchaseAuth; }
     // DataObject Method Overrides
@@ -56,7 +63,9 @@ public class Order implements DataObject {
         orderStatus = record[i++];
         orderDate = DataManager.decodeInt(Arrays.copyOfRange(record, i, i += 4));
         orderCost = DataManager.decodeFloat(Arrays.copyOfRange(record, i, i += 4));
+        premCost = DataManager.decodeFloat(Arrays.copyOfRange(record, i, i += 4));
         orderDelivery = record[i++];
+        deliveryCost = DataManager.decodeFloat(Arrays.copyOfRange(record, i, i += 4));
         invoiceID = DataManager.decodeInt(Arrays.copyOfRange(record, i, i += 4));
         purchaseAuth = DataManager.decodeLong(Arrays.copyOfRange(record, i, i + 8));
     }
@@ -68,9 +77,13 @@ public class Order implements DataObject {
         serial.put(DataManager.encode(orderID), 0, 4);
         serial.put(DataManager.encode(customerID), 0, 4);
         serial.put(8, orderStatus);
+        serial.get();
         serial.put(DataManager.encode(orderDate), 0, 4);
         serial.put(DataManager.encode(orderCost), 0, 4);
+        serial.put(DataManager.encode(premCost), 0, 4);
         serial.put(17, orderDelivery);
+        serial.get();
+        serial.put(DataManager.encode(deliveryCost), 0, 4);
         serial.put(DataManager.encode(invoiceID), 0, 4);
         serial.put(DataManager.encode(purchaseAuth), 0, 8);
         return serial.array();
@@ -100,7 +113,7 @@ public class Order implements DataObject {
     public boolean update() throws Exception { return DataManager.update(this, orderID); }
     public boolean delete() throws Exception { return DataManager.delete(this, orderID); }
     public boolean purchase(String creditCard) throws Exception {
-        BankRequest request = new BankRequest(creditCard, orderCost);
+        BankRequest request = new BankRequest(creditCard, -orderCost);
         return (invoiceID = (purchaseAuth = request.execute()) > 0 ? orderID : 0) > 0;
     }
     // Static Methods

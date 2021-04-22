@@ -61,9 +61,9 @@ public class Request implements DataObject {
         int i = 0;
         action = record[i++];
         idType = record[i++];
-        accountID = DataManager.decodeInt(Arrays.copyOfRange(record, i, (i += 4) - 1));
-        creditCard = DataManager.decodeString(Arrays.copyOfRange(record, i, (i += creditCardLength * 4) - 1));
-        balance = DataManager.decodeFloat(Arrays.copyOfRange(record, i, i + 3));
+        accountID = DataManager.decodeInt(Arrays.copyOfRange(record, i, i += 4));
+        creditCard = DataManager.decodeString(Arrays.copyOfRange(record, i, i += creditCardLength * 4));
+        balance = DataManager.decodeFloat(Arrays.copyOfRange(record, i, i + 4));
     }
     public int id() { return accountID; }
     public void setID(int id) { accountID = id; }
@@ -71,7 +71,9 @@ public class Request implements DataObject {
     public byte[] serialize() {
         ByteBuffer serial = ByteBuffer.allocate(recordLength);
         serial.put(0, action);
+        serial.get();
         serial.put(0, idType);
+        serial.get();
         serial.put(DataManager.encode(accountID), 0, 4);
         serial.put(DataManager.encode(creditCard, creditCardLength), 0, creditCardLength * 4);
         serial.put(DataManager.encode(balance), 0, 4);
@@ -106,7 +108,7 @@ public class Request implements DataObject {
                 batchStart += batchSize;
                 for (byte[] account : accounts) {
                     temp.fill(account);
-                    if (temp.getCreditCard().trim().equals(creditCard)) {
+                    if (temp.getCreditCard().trim().equals(creditCard.trim())) {
                         accountID = temp.id();
                         break;
                     }
@@ -128,7 +130,7 @@ public class Request implements DataObject {
                     byte[] data = DataManager.read(bankAccount, accountID);
                     if (data != null) {
                         bankAccount.fill(data);
-                        if (balance > 0 || bankAccount.getBalance() > balance) {
+                        if (balance > 0 || bankAccount.getBalance() + balance > 0) {
                             bankAccount.addBalance(balance);
                             if (DataManager.update(bankAccount, accountID)) {
                                 result = transID;
@@ -145,7 +147,7 @@ public class Request implements DataObject {
                     byte[] data = DataManager.read(bankAccount, accountID);
                     if (data != null) {
                         bankAccount.fill(data);
-                        if (bankAccount.id() == accountID && bankAccount.getBalance() > -balance) {
+                        if (bankAccount.id() == accountID && bankAccount.getBalance() > balance) {
                             result = transID;
                         }
                     }

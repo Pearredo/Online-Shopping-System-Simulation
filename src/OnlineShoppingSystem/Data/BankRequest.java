@@ -31,21 +31,22 @@ public class BankRequest implements DataObject {
         int i = 0;
         action = record[i++];
         idType = record[i++];
-        accountID = DataManager.decodeInt(Arrays.copyOfRange(record, i, (i += 4) - 1));
-        creditCard = DataManager.decodeString(Arrays.copyOfRange(record, i, (i += creditCardLength * 4) - 1));
-        balance = DataManager.decodeFloat(Arrays.copyOfRange(record, i, i + 3));
+        accountID = DataManager.decodeInt(Arrays.copyOfRange(record, i, i += 4));
+        creditCard = DataManager.decodeString(Arrays.copyOfRange(record, i, i += creditCardLength * 4));
+        balance = DataManager.decodeFloat(Arrays.copyOfRange(record, i, i + 4));
     }
     public int id() { return accountID; }
     public void setID(int id) { accountID = id; }
     public int recordLength() { return recordLength; }
     public byte[] serialize() {
-        int i, l;
         ByteBuffer serial = ByteBuffer.allocate(recordLength);
-        serial.put(i = 0, action);
-        serial.put(++i, idType);
-        serial.put(DataManager.encode(accountID), ++i, l = 4);
-        serial.put(DataManager.encode(creditCard, creditCardLength), i += l, l = creditCardLength * 4);
-        serial.put(DataManager.encode(balance), i + l, 4);
+        serial.put(0, action);
+        serial.get();
+        serial.put(1, idType);
+        serial.get();
+        serial.put(DataManager.encode(accountID), 0, 4);
+        serial.put(DataManager.encode(creditCard, creditCardLength), 0, creditCardLength * 4);
+        serial.put(DataManager.encode(balance), 0, 4);
         return serial.array();
     }
     public String dataFile() { return dataFile; }

@@ -80,7 +80,9 @@ public class CustomerAccount implements DataObject {
         serial.put(DataManager.encode(address, addressLength), 0, addressLength * 4);
         serial.put(DataManager.encode(creditCard, creditCardLength), 0, creditCardLength * 4);
         serial.put(recordLength - 2, isPremium ? (byte)1 : 0);
+        serial.get();
         serial.put(recordLength - 1, premPaid ? (byte)1 : 0);
+        serial.get();
         return serial.array();
     }
     public String dataFile() { return dataFile; }
