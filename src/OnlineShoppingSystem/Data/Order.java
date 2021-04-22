@@ -164,7 +164,6 @@ public class Order implements DataObject {
                 temp.fill(record);
                 if (temp.getCustomerID() == customerID) {
                     orders.add(new Order(record));
-                    break;
                 }
             }
         }
