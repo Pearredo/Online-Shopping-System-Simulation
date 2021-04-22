@@ -188,13 +188,15 @@ public class DataManager {
                             break;
                         case "p":
                         case "put":
-                            if (args.length == 8) {
+                            if (args.length == 10) {
                                 Order record = new Order(
                                     Integer.parseInt(args[3]),
                                     Byte.parseByte(args[4]),
                                     Integer.parseInt(args[5]),
                                     Float.parseFloat(args[6]),
-                                    Byte.parseByte(args[7]));
+                                    Float.parseFloat(args[7]),
+                                    Byte.parseByte(args[8]),
+                                    Float.parseFloat(args[9]));
                                 if (args[2].equalsIgnoreCase("new")) {
                                     record.create();
                                 } else if (!args[2].matches("[^0-9]")) {
@@ -232,12 +234,13 @@ public class DataManager {
                             break;
                         case "p":
                         case "put":
-                            if (args.length == 7) {
+                            if (args.length == 8) {
                                 OrderItem record = new OrderItem(
                                     Integer.parseInt(args[3]),
                                     Integer.parseInt(args[4]),
                                     Integer.parseInt(args[5]),
-                                    Byte.parseByte(args[6]));
+                                    Float.parseFloat(args[6]),
+                                    Byte.parseByte(args[7]));
                                 if (args[2].equalsIgnoreCase("new")) {
                                     record.create();
                                 } else if (!args[2].matches("[^0-9]")) {

@@ -26,7 +26,7 @@ public class Main extends Application {
         menu_supplier_register;
     public static CustomerAccount customer;
     public static SupplierAccount supplier;
-    public static ArrayList<OrderItem> cart;
+    public static HashMap<Integer, OrderItem> cart;
     public static boolean resubmit = false;
     public static void loadWelcomeMenu() {
         customer = null;
@@ -57,7 +57,6 @@ public class Main extends Application {
             }
         });
         VBox menu_welcome = new VBox(header, button_holder, exit);
-        menu_welcome.setAlignment(Pos.BASELINE_RIGHT);
         Main.scene.setRoot(menu_welcome);
     }
     @Override

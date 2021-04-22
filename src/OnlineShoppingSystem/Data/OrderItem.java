@@ -10,15 +10,17 @@ public class OrderItem implements DataObject {
     private int orderID;
     private int itemID;
     private int itemQty;
+    private float lineCost;
     private byte orderItemStatus;
-    private final int recordLength = 17;
+    private final int recordLength = 21;
     public String dataFile = "FILE_DATA_ORDERITEMS";
     // Constructors
-    public OrderItem(int orderID, int itemID, int itemQty, byte orderItemStatus) {
+    public OrderItem(int orderID, int itemID, int itemQty, float lineCost, byte orderItemStatus) {
         orderItemID = 0;
         this.orderID = orderID;
         this.itemID = itemID;
         this.itemQty = itemQty;
+        this.lineCost = lineCost;
         this.orderItemStatus = orderItemStatus;
     }
     public OrderItem(int id) throws Exception {
@@ -37,6 +39,7 @@ public class OrderItem implements DataObject {
     public int getItemID() { return itemID; }
     public int getItemQty() { return itemQty; }
     public void setItemQty(int itemQty) { this.itemQty = itemQty; }
+    public float getLineCost() { return lineCost; }
     public byte getOrderItemStatus() { return orderItemStatus; }
     public void setOrderItemStatus(byte orderItemStatus) { this.orderItemStatus = orderItemStatus; }
     // DataObject Method Overrides
@@ -46,6 +49,7 @@ public class OrderItem implements DataObject {
         orderID = DataManager.decodeInt(Arrays.copyOfRange(record, i, i += 4));
         itemID = DataManager.decodeInt(Arrays.copyOfRange(record, i, i += 4));
         itemQty = DataManager.decodeInt(Arrays.copyOfRange(record, i, i += 4));
+        lineCost = DataManager.decodeFloat(Arrays.copyOfRange(record, i, i += 4));
         orderItemStatus = record[i];
     }
     public int id() { return orderItemID; }
@@ -57,7 +61,8 @@ public class OrderItem implements DataObject {
         serial.put(DataManager.encode(orderID), 0, 4);
         serial.put(DataManager.encode(itemID), 0, 4);
         serial.put(DataManager.encode(itemQty), 0, 4);
-        serial.put(16, orderItemStatus);
+        serial.put(DataManager.encode(lineCost), 0, 4);
+        serial.put(20, orderItemStatus);
         return serial.array();
     }
     public String dataFile() { return dataFile; }
