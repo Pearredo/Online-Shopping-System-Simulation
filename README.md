@@ -32,5 +32,5 @@ Generates, submits, and receives Banking System data requests but does not direc
 <b>1:</b> Mail Delivery<br/>
 
 ##To-Do:
-Improve navigation with more back/logout/exit/view cart buttons  
+Improve navigation with more back/logout/exit/view cart buttons    
     
