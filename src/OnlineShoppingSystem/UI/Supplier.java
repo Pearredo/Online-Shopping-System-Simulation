@@ -161,11 +161,18 @@ public class Supplier {
                 loadSupplierStockMenu();
             }
         });
-        Button orderManager = new Button("Fill Open Orders");
-        orderManager.setOnAction(new EventHandler<ActionEvent>() {
+        Button fillOrders = new Button("Fill Open Orders");
+        fillOrders.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                loadSupplierOrders();
+                loadSupplierOrders(false);
+            }
+        });
+        Button shipOrders = new Button("Ship Filled Orders");
+        shipOrders.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadSupplierOrders(true);
             }
         });
         Button logout = new Button("Logout");
@@ -175,7 +182,7 @@ public class Supplier {
                 loadSupplierLogin();
             }
         });
-        Main.scene.setRoot(new VBox(welcome, updateInfo, stockManager, orderManager, logout));
+        Main.scene.setRoot(new VBox(welcome, updateInfo, stockManager, fillOrders, shipOrders, logout));
     }
     public static void loadSupplierInfo() {
         Label header = new Label("Updating Personal Information:");
@@ -537,7 +544,7 @@ public class Supplier {
                 back));
         }
     }
-    public static void loadSupplierOrders() {
+    public static void loadSupplierOrders(boolean readyOnly) {
         ArrayList<Item> items = new ArrayList<>();
         HashMap<Integer, Item> itemRef = new HashMap<>();
         ArrayList<OrderItem> orderItems = new ArrayList<>();
@@ -552,7 +559,7 @@ public class Supplier {
             try {
                 itemOrders = OrderItem.getOrderItems(item.id(), 'i');
                 for (OrderItem oi : itemOrders) {
-                    if (oi.getOrderItemStatus() < 3) {
+                    if ((!readyOnly && oi.getOrderItemStatus() == 1) || (readyOnly && oi.getOrderItemStatus() == 2)) {
                         orderItems.add(oi);
                     }
                 }
@@ -578,7 +585,7 @@ public class Supplier {
                         curItem.update();
                         orderItem.update();
                         Order.syncOrderStatus(orderItem.getOrderID());
-                        loadSupplierOrders();
+                        loadSupplierOrders(readyOnly);
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         // do something here...
@@ -596,7 +603,7 @@ public class Supplier {
                         curItem.update();
                         orderItem.update();
                         Order.syncOrderStatus(orderItem.getOrderID());
-                        loadSupplierOrders();
+                        loadSupplierOrders(readyOnly);
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         // do something here...
