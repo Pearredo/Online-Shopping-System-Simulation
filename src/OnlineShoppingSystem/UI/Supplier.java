@@ -571,10 +571,13 @@ public class Supplier {
         for (int i = 0; i < orderItems.size(); i++) {
             OrderItem orderItem = orderItems.get(i);
             Item curItem = itemRef.get(orderItem.getItemID());
+            int availStock = itemRef.get(orderItem.getItemID()).getItemQty() - itemRef.get(orderItem.getItemID()).getReservedQty();
             Label oiName = new Label(itemRef.get(orderItem.getItemID()).getItemName()),
                 oiNeed = new Label("Needed: " + orderItem.getItemQty()),
-                oiQty = new Label("Available: " + (itemRef.get(orderItem.getItemID()).getItemQty() - itemRef.get(orderItem.getItemID()).getReservedQty())),
-                oiReserved = new Label("Reserved: " + orderItem.getItemQty());
+                oiQty = new Label("Available: " + availStock),
+                oiReserved = new Label("Reserved: " + orderItem.getItemQty()),
+                oiOutOfStock = new Label("Not Enough Stock to Fill");
+            oiOutOfStock.setTextFill(Color.color(0.85f, 0, 0));
             Button fill = new Button("Fill");
             fill.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -610,10 +613,12 @@ public class Supplier {
                     }
                 }
             });
-            oiMenus[i] = new VBox(oiName, new HBox(
-                5f,
-                orderItem.getOrderItemStatus() == 1 ? new VBox(oiNeed, oiQty) : oiReserved,
-                orderItem.getOrderItemStatus() == 1 ? fill : ship));
+            oiMenus[i] = new VBox(
+                oiName,
+                new HBox(
+                    5f,
+                    orderItem.getOrderItemStatus() == 1 ? new VBox(oiNeed, oiQty) : oiReserved,
+                    orderItem.getOrderItemStatus() == 1 ? (availStock >= orderItem.getItemQty() ? fill : oiOutOfStock) : ship));
         }
         Label header = new Label("Managing Pending Item Orders");
         Label notice = new Label(orderItems.size() < 1 ? "There are no pending orders for your catalogue." : "");
