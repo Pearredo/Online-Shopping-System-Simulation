@@ -10,11 +10,18 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Customer {
     //loads the customer login scene
+    public static Background customerBackground(){
+        Background cus_background = new Background(new BackgroundFill(Color.LIGHTCYAN, CornerRadii.EMPTY, Insets.EMPTY));
+        return cus_background;
+    }
+
     public static void loadCustomerLogin() {
         Main.customer = null;
         Main.cart = null;
@@ -25,14 +32,15 @@ public class Customer {
         login_error.setTextFill(Color.color(.85f, 0, 0));
         user_error.setTextFill(Color.color(.85f, 0, 0));
         password_error.setTextFill(Color.color(.85f, 0, 0));
-        Label user_textbox_label = new Label("Username: ");
+        Label user_textbox_label = new Label("Username:\t");
         TextField user_textbox = new TextField();
-        Label password_label = new Label("Password: ");
-        TextField password_textbox = new TextField();
+        Label password_label = new Label("Password:\t\t");
+        PasswordField password_textbox = new PasswordField();
         VBox user_login_interface = new VBox(
             new HBox(user_textbox_label, user_textbox, user_error),
             new HBox(password_label, password_textbox, password_error));
         Button customer_login_button = new Button("Log in");
+
         customer_login_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -76,7 +84,9 @@ public class Customer {
                 Main.loadWelcomeMenu();
             }
         });
-        Main.scene.setRoot(new VBox(login_label, user_login_interface, customer_login_button, login_error, customer_register, back_button));
+        VBox Cus_login_interface = new VBox(login_label, user_login_interface, customer_login_button, login_error, customer_register, back_button);
+        Cus_login_interface.setBackground(customerBackground());
+        Main.scene.setRoot(Cus_login_interface);
     }
     //creates new account
     public static void loadCustomerRegister() {
@@ -100,7 +110,7 @@ public class Customer {
         Label reg_user_textbox_label = new Label("Username: ");
         TextField reg_user_textbox = new TextField();
         Label reg_pass_textbox_label = new Label("Password: ");
-        TextField reg_pass_textbox = new TextField();
+        PasswordField reg_pass_textbox = new PasswordField();
         Label reg_customer_name_label = new Label("Full Name: ");
         TextField reg_name = new TextField();
         Label reg_customer_addr_label = new Label("Address: ");
@@ -193,12 +203,9 @@ public class Customer {
                 loadCustomerLogin();
             }
         });
-        Main.scene.setRoot(new VBox(
-            customer_register_label,
-            reg_interface,
-            customer_reg_button,
-            register_error,
-            back_button));
+        VBox reg_scene = new VBox(customer_register_label, reg_interface, customer_reg_button, register_error, back_button);
+        reg_scene.setBackground(customerBackground());
+        Main.scene.setRoot(reg_scene);
     }
     //loads customer menu
     public static void loadCustomerMenu() {
@@ -239,7 +246,9 @@ public class Customer {
                 loadViewOrdersScreen();
             }
         });
-        Main.scene.setRoot(new VBox(5f,welcome, updateInfo, Select_Items, View_Cart, View_Orders, logout));
+        VBox cus_menu_interface = new VBox(5f,welcome, updateInfo, Select_Items, View_Cart, View_Orders, logout);
+        cus_menu_interface.setBackground(customerBackground());
+        Main.scene.setRoot(cus_menu_interface);
     }
     public static void loadCustomerInfo() {
         Label header = new Label("Updating Personal Information:");
@@ -285,6 +294,7 @@ public class Customer {
             new HBox(creditCardLabel, creditCard, cc_error),
             new HBox(premiumLabel, accountType)
         );
+        update_interface.setBackground(customerBackground());
         Button update_button = new Button("Update Account");
         update_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -339,12 +349,9 @@ public class Customer {
                 loadCustomerMenu();
             }
         });
-        Main.scene.setRoot(new VBox(
-            header,
-            update_interface,
-            update_button,
-            update_error,
-            back_button));
+        VBox cus_update_interface =new VBox(header, update_interface, update_button, update_error, back_button);
+        cus_update_interface.setBackground(customerBackground());
+        Main.scene.setRoot(cus_update_interface);
     }
     public static void loadSelectItemsMenu(){
         Label Select_items_label = new Label("Please select a store catalogue below:");
@@ -379,7 +386,9 @@ public class Customer {
                 loadCustomerMenu();
             }
         });
-        Main.scene.setRoot(new VBox(Select_items_label, oiPane, back_button));
+        VBox select_items_interface = new VBox(Select_items_label, oiPane, back_button);
+        select_items_interface.setBackground(customerBackground());
+        Main.scene.setRoot(select_items_interface);
     }
     public static void loadAddToCart(SupplierAccount sup){
         Label welcomeToStore = new Label("Welcome to the catalogue for " + sup.getName() + "!");
@@ -396,7 +405,7 @@ public class Customer {
         Node[] listOfItems = new Node[itemCount];
         TextField[] buyAmounts = new TextField[itemCount];
         Label add_error = new Label();
-        add_error.setTextFill(Color.color(0.85f, 0, 0));
+        add_error.setBackground(new Background(new BackgroundFill(Color.color(0.85f, 0, 0), CornerRadii.EMPTY, Insets.EMPTY)));
         for(int i = 0; i < itemCount; i++){
             Item item = itemList.get(i);
             Label itemName = new Label(item.getItemName());
@@ -421,7 +430,7 @@ public class Customer {
                     }
                     qty.setText(String.valueOf(value > 0 ? --value : 0));
                     add_error.setText("");
-                    add_error.setTextFill(Color.color(0.85f, 0, 0));
+                    add_error.setBackground(new Background(new BackgroundFill(Color.color(0.85f, 0, 0), CornerRadii.EMPTY, Insets.EMPTY)));
                 }
             });
             increase.setOnAction(new EventHandler<ActionEvent>() {
@@ -435,7 +444,7 @@ public class Customer {
                     }
                     qty.setText(String.valueOf(++value));
                     add_error.setText("");
-                    add_error.setTextFill(Color.color(0.85f, 0, 0));
+                    add_error.setBackground(new Background(new BackgroundFill(Color.color(0.85f, 0, 0), CornerRadii.EMPTY, Insets.EMPTY)));
                 }
             });
             HBox buyUI = new HBox(5f, reduce, qty, increase);
@@ -443,7 +452,9 @@ public class Customer {
             VBox storeItem = new VBox(itemName,itemInfo,itemPrc,buyUI,curQty);
             listOfItems[i] = storeItem;
         }
-        ScrollPane oiPane = new ScrollPane(new VBox(listOfItems));
+        VBox listOfItems_VBox = new VBox(listOfItems);
+
+        ScrollPane oiPane = new ScrollPane(listOfItems_VBox);
         oiPane.setPrefViewportHeight(Main.scene.getHeight());
         oiPane.setPrefViewportWidth(Main.scene.getWidth());
         oiPane.setPrefSize(Main.scene.getWidth(), Main.scene.getHeight());
@@ -454,7 +465,7 @@ public class Customer {
                 try {
                     boolean added = false;
                     add_error.setText("");
-                    add_error.setTextFill(Color.color(0.85f, 0, 0));
+                    add_error.setBackground(new Background(new BackgroundFill(Color.color(0.85f, 0, 0), CornerRadii.EMPTY, Insets.EMPTY)));
                     for (int i = 0; i < buyAmounts.length; i++) {
                         Item item = itemList.get(i);
                         int value,
@@ -476,7 +487,7 @@ public class Customer {
                     }
                     if (added) {
                         add_error.setText("All items were added to your cart");
-                        add_error.setTextFill(Color.color(0, 0.85f, 0));
+                        add_error.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN,CornerRadii.EMPTY, Insets.EMPTY)));
                     }
                 } catch (Exception ex) {
                     add_error.setText("An unexpected error occurred");
@@ -490,7 +501,10 @@ public class Customer {
                 loadSelectItemsMenu();
             }
         });
-        Main.scene.setRoot(new VBox(welcomeToStore, oiPane, addButton, add_error, back_button));
+
+        VBox add_cart_interface = new VBox(welcomeToStore, oiPane, addButton, add_error, back_button);
+        add_cart_interface.setBackground(customerBackground());
+        Main.scene.setRoot(add_cart_interface);
     }
     public static void loadViewCartScreen() {
         float runningTotal = 0;
