@@ -1,5 +1,5 @@
-Username,Password,Name,Address,CreditCard
-johndoe,password1,John Doe,"101 Somewhere Street, Lubbock TX 79401",1111111111111111
-janedoe,password2,Jane Doe,"526 Righthere Drive, Lubbock TX 79402",3333333333333333
-janejohn,password3,Jane John,"837 Overthere Court, Lubbock TX 79403",7777777777777777
-johnjane,password4,John Jane,"654 Notthere Lane, Lubbock TX 79402",3248752876324543
+Username,Password,Name,Address,PhoneNumber,CreditCard
+johndoe,password1,John Doe,"101 Somewhere Street, Lubbock TX 79401",(101)584-6845,1111111111111111
+janedoe,password2,Jane Doe,"526 Righthere Drive, Lubbock TX 79402",(843)432-2387,3333333333333333
+janejohn,password3,Jane John,"837 Overthere Court, Lubbock TX 79403",(672)567-2856,7777777777777777
+johnjane,password4,John Jane,"654 Notthere Lane, Lubbock TX 79402",(239)826-1965,3248752876324543

@@ -45,7 +45,7 @@ public class Customer {
                         error = true;
                         user_error.setText("A username must be provided");
                     }
-                    if (password_label.getText().length() < 1) {
+                    if (password_textbox.getText().length() < 1) {
                         error = true;
                         password_error.setText("A password must be provided");
                     }
@@ -88,12 +88,14 @@ public class Customer {
             pass_error = new Label(),
             name_error = new Label(),
             addr_error = new Label(),
+            phone_error = new Label(),
             cc_error = new Label();
         register_error.setTextFill(Color.color(.85f, 0, 0));
         user_error.setTextFill(Color.color(.85f, 0, 0));
         pass_error.setTextFill(Color.color(.85f, 0, 0));
         name_error.setTextFill(Color.color(.85f, 0, 0));
         addr_error.setTextFill(Color.color(.85f, 0, 0));
+        phone_error.setTextFill(Color.color(.85f, 0, 0));
         cc_error.setTextFill(Color.color(.85f, 0, 0));
         Label reg_user_textbox_label = new Label("Username: ");
         TextField reg_user_textbox = new TextField();
@@ -104,6 +106,8 @@ public class Customer {
         Label reg_customer_addr_label = new Label("Address: ");
         TextField reg_customer_addr = new TextField();
         reg_customer_addr.setPrefWidth(300);
+        Label reg_customer_phone_label = new Label("Phone Number: ");
+        TextField reg_customer_phone = new TextField();
         Label reg_customer_CC_Label = new Label("Credit Card Number: ");
         TextField reg_customer_cc = new TextField();
         Label reg_customer_prem_label = new Label("Account Type: ");
@@ -117,6 +121,7 @@ public class Customer {
                 new HBox(reg_pass_textbox_label, reg_pass_textbox, pass_error),
                 new HBox(reg_customer_name_label, reg_name, name_error),
                 new HBox(reg_customer_addr_label, reg_customer_addr, addr_error),
+                new HBox(reg_customer_phone_label, reg_customer_phone, phone_error),
                 new HBox(reg_customer_CC_Label, reg_customer_cc, cc_error),
                 new HBox(reg_customer_prem_label, accountType)
         );
@@ -149,6 +154,10 @@ public class Customer {
                         error = true;
                         addr_error.setText("An address must be provided");
                     }
+                    if (reg_customer_phone.getText().length() < 10 || !reg_customer_phone.getText().matches("^(\\(?)(\\d{3})(\\)?)(-?)(\\d{3})(-?)(\\d{4})$")) {
+                        error = true;
+                        phone_error.setText("A 10-digit phone number must be provided");
+                    }
                     if (reg_customer_cc.getText().length() != 16 || reg_customer_cc.getText().matches("[^0-9]")) {
                         error = true;
                         cc_error.setText("A valid, 16-digit credit card must be provided");
@@ -159,6 +168,7 @@ public class Customer {
                             reg_pass_textbox.getText(),
                             reg_name.getText(),
                             reg_customer_addr.getText(),
+                            reg_customer_phone.getText(),
                             reg_customer_cc.getText(),
                             accountType.getValue().equalsIgnoreCase("Premium ($40.00 w/ First Annual Purchase)"),
                             false);
@@ -237,11 +247,13 @@ public class Customer {
             pass_error = new Label(),
             name_error = new Label(),
             addr_error = new Label(),
+            phone_error = new Label(),
             cc_error = new Label();
         update_error.setTextFill(Color.color(.85f, 0, 0));
         pass_error.setTextFill(Color.color(.85f, 0, 0));
         name_error.setTextFill(Color.color(.85f, 0, 0));
         addr_error.setTextFill(Color.color(.85f, 0, 0));
+        phone_error.setTextFill(Color.color(.85f, 0, 0));
         cc_error.setTextFill(Color.color(.85f, 0, 0));
         Label passwordLabel = new Label("Change Password (Leave blank to not change): ");
         TextField password = new TextField();
@@ -250,6 +262,8 @@ public class Customer {
         Label addressLabel = new Label("Address: ");
         TextField address = new TextField(Main.customer.getAddress());
         address.setPrefWidth(300);
+        Label phoneLabel = new Label("Phone Number: ");
+        TextField phone = new TextField(Main.customer.getPhoneNumber());
         Label creditCardLabel = new Label("Credit Card Number: ");
         TextField creditCard = new TextField(Main.customer.getCreditCard());
         Label premiumLabel = new Label("Account Type: ");
@@ -267,6 +281,7 @@ public class Customer {
             new HBox(passwordLabel, password, pass_error),
             new HBox(nameLabel, name, name_error),
             new HBox(addressLabel, address, addr_error),
+            new HBox(phoneLabel, phone, phone_error),
             new HBox(creditCardLabel, creditCard, cc_error),
             new HBox(premiumLabel, accountType)
         );
@@ -289,6 +304,10 @@ public class Customer {
                         error = true;
                         addr_error.setText("An address must be provided");
                     }
+                    if (phone.getText().length() < 10 || !phone.getText().matches("^(\\(?)(\\d{3})(\\)?)(-?)(\\d{3})(-?)(\\d{4})$")) {
+                        error = true;
+                        phone_error.setText("A 10-digit phone number must be provided");
+                    }
                     if (creditCard.getText().length() != 16 || creditCard.getText().matches("[^0-9]")) {
                         error = true;
                         cc_error.setText("A valid, 16-digit credit card must be provided");
@@ -299,6 +318,7 @@ public class Customer {
                         }
                         Main.customer.setName(name.getText());
                         Main.customer.setAddress(address.getText());
+                        Main.customer.setPhoneNumber(phone.getText());
                         Main.customer.setCreditCard(creditCard.getText());
                         Main.customer.setPremPaid(Main.customer.premPaid());
                         Main.customer.setPremium(accountType.getValue().equalsIgnoreCase("Premium ($40.00 w/ First Annual Purchase)"));

@@ -95,15 +95,16 @@ public class DataManager {
                             break;
                         case "p":
                         case "put":
-                            if (args.length == 10) {
-                                String isPrem = args[8].toLowerCase(),
-                                    premPaid = args[9].toLowerCase();
+                            if (args.length == 11) {
+                                String isPrem = args[9].toLowerCase(),
+                                    premPaid = args[10].toLowerCase();
                                 CustomerAccount record = new CustomerAccount(
                                     args[3],
                                     args[4],
                                     args[5],
                                     args[6],
                                     args[7],
+                                    args[8],
                                     isPrem.equals("1") || isPrem.equals("y") || isPrem.equals("true") || isPrem.equals("yes"),
                                     premPaid.equals("1") || premPaid.equals("y") || premPaid.equals("true") || premPaid.equals("yes"));
                                 if (args[2].equalsIgnoreCase("new")) {
