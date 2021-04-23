@@ -81,29 +81,29 @@ public class Item implements DataObject {
         return serial.array();
     }
     public String dataFile() { return dataFile; }
+    public String stringify() {
+        return String.format(
+                "Item ID: %d\n" +
+                        "Supplier ID: %d\n" +
+                        "Item Name: %s\n" +
+                        "Item Desc: %s\n" +
+                        "Item Reg Cost: %,.2f\n" +
+                        "Item Prem Cost: %,.2f\n" +
+                        "Item Qty: %d\n" +
+                        "Reserved Qty: %d\n",
+                itemID,
+                supplierID,
+                itemName,
+                itemDesc,
+                itemRegCost,
+                itemPremCost,
+                itemQty,
+                reservedQty);
+    }
     // DataObject-Dependent Methods
     public boolean create() throws Exception { return DataManager.create(this); }
     public boolean update() throws Exception { return DataManager.update(this, itemID); }
     public boolean delete() throws Exception { return DataManager.delete(this, itemID); }
-    public String stringify() {
-        return String.format(
-            "Item ID: %d\n" +
-            "Supplier ID: %d\n" +
-            "Item Name: %s\n" +
-            "Item Desc: %s\n" +
-            "Item Reg Cost: %,.2f\n" +
-            "Item Prem Cost: %,.2f\n" +
-            "Item Qty: %d\n" +
-            "Reserved Qty: %d\n",
-            itemID,
-            supplierID,
-            itemName,
-            itemDesc,
-            itemRegCost,
-            itemPremCost,
-            itemQty,
-            reservedQty);
-    }
     // Static Methods
     public static void showAll() throws Exception {
         Item record = new Item();
