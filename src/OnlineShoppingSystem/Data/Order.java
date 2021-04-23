@@ -51,7 +51,7 @@ public class Order implements DataObject {
     public float getOrderCost() { return orderCost; }
     public void setOrderCost(float orderCost) { this.orderCost = orderCost; }
     public float getPremCost() { return premCost; }
-    public float getOrderDelivery() { return orderDelivery; }
+    public byte getOrderDelivery() { return orderDelivery; }
     public float getDeliveryCost() { return deliveryCost; }
     public int getInvoiceID() { return invoiceID; }
     public long getPurchaseAuth() { return purchaseAuth; }
@@ -168,5 +168,26 @@ public class Order implements DataObject {
             }
         }
         return orders;
+    }
+    public static boolean syncOrderStatus(int orderID) throws Exception {
+        Order order = Order.getOrder(orderID);
+        order.setOrderStatus((byte)5);
+        boolean all3 = true,
+            all2 = true,
+            all1 = true,
+            any1 = false;
+        for (OrderItem orderItem : OrderItem.getOrderItems(orderID, 'o')) {
+            switch (orderItem.getOrderItemStatus()) {
+                case 1: all2 = all3 = !(any1 = true); break;
+                case 2: all1 = all3 = false; break;
+                case 3: all1 = all2 = false; break;
+            }
+        }
+        if (all1) order.setOrderStatus((byte)1);
+        else if (any1) order.setOrderStatus((byte)2);
+        else if (all2) order.setOrderStatus((byte)3);
+        else if (!all3) order.setOrderStatus((byte)4);
+        else order.setOrderStatus((byte)5);
+        return order.update();
     }
 }
