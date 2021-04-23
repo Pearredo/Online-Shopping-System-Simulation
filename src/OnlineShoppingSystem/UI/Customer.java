@@ -14,66 +14,58 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Customer {
-    public static void loadCustomerIntro() {
-        Main.customer = null;
-        Main.cart = null;
-        Button customer_login = new Button("Log in");
-        customer_login.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadCustomerLogin();
-            }
-        });
-        Button customer_register = new Button("Register");
-        customer_register.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadCustomerRegister();
-            }
-        });
-        HBox customer_button_holder = new HBox(customer_login, customer_register);
-        Button back_button = new Button("Back");
-        back_button.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                Main.resubmit = false;
-                Main.loadWelcomeMenu();
-            }
-        });
-        Main.scene.setRoot(new VBox(
-            new Label("Welcome Customer"),
-            new Label("Would you like to Log in or register for a customer account?"),
-            customer_button_holder,
-            back_button));
-    }
-    //loads the customer login screne
+    //loads the customer login scene
     public static void loadCustomerLogin() {
         Main.customer = null;
         Main.cart = null;
-        Label login_label = new Label("Please enter your customer log in information:");
-        Label error_label = new Label(Main.resubmit ? "An invalid username and password were provided." : "");
-        error_label.setTextFill(Color.color(.85f, 0, 0));
-        Label user_textbox_label = new Label("Username:");
+        Label login_label = new Label("Welcome to the Customer Portal!"),
+            login_error = new Label(),
+            user_error = new Label(),
+            password_error = new Label();
+        login_error.setTextFill(Color.color(.85f, 0, 0));
+        user_error.setTextFill(Color.color(.85f, 0, 0));
+        password_error.setTextFill(Color.color(.85f, 0, 0));
+        Label user_textbox_label = new Label("Username: ");
         TextField user_textbox = new TextField();
-        Label password_label = new Label("Password:");
+        Label password_label = new Label("Password: ");
         TextField password_textbox = new TextField();
-        HBox user_login_interface = new HBox(user_textbox_label, user_textbox, password_label, password_textbox);
+        VBox user_login_interface = new VBox(
+            new HBox(user_textbox_label, user_textbox, user_error),
+            new HBox(password_label, password_textbox, password_error));
         Button customer_login_button = new Button("Log in");
         customer_login_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 try {
-                    Main.customer = CustomerAccount.Login(user_textbox.getText(), password_textbox.getText());
-                    if (!(Main.resubmit = Main.customer == null)) {
-                        loadCustomerMenu();
-                    } else {
-                        loadCustomerLogin();
+                    boolean error = false;
+                    login_error.setText("");
+                    user_error.setText("");
+                    password_error.setText("");
+                    if (user_textbox.getText().length() < 1) {
+                        error = true;
+                        user_error.setText("A username must be provided");
+                    }
+                    if (password_label.getText().length() < 1) {
+                        error = true;
+                        password_error.setText("A password must be provided");
+                    }
+                    if (!error) {
+                        if ((Main.customer = CustomerAccount.Login(user_textbox.getText(), password_textbox.getText())) != null) {
+                            loadCustomerMenu();
+                        } else {
+                            login_error.setText("An invalid username and password were provided");
+                        }
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    Main.resubmit = true;
-                    loadCustomerLogin();
+                    login_error.setText("An unexpected error occurred");
                 }
+            }
+        });
+        Button customer_register = new Button("Register New Account");
+        customer_register.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadCustomerRegister();
             }
         });
         //back button
@@ -81,55 +73,106 @@ public class Customer {
         back_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Main.resubmit = false;
-                loadCustomerIntro();
+                Main.loadWelcomeMenu();
             }
         });
-        Main.scene.setRoot(new VBox(login_label, error_label, user_login_interface, customer_login_button, back_button));
+        Main.scene.setRoot(new VBox(login_label, user_login_interface, customer_login_button, login_error, customer_register, back_button));
     }
     //creates new account
     public static void loadCustomerRegister() {
         Main.customer = null;
         Main.cart = null;
-        Label customer_register_label = new Label("Please enter your intended Username, Password, and general information:");
-        Label error_label = new Label(Main.resubmit ? "That username is already claimed." : "");
-        error_label.setTextFill(Color.color(.85f, 0, 0));
-        Label reg_user_textbox_label = new Label("Username:\t");
+        Label customer_register_label = new Label("Please enter your account information:"),
+            register_error = new Label(),
+            user_error = new Label(),
+            pass_error = new Label(),
+            name_error = new Label(),
+            addr_error = new Label(),
+            cc_error = new Label();
+        register_error.setTextFill(Color.color(.85f, 0, 0));
+        user_error.setTextFill(Color.color(.85f, 0, 0));
+        pass_error.setTextFill(Color.color(.85f, 0, 0));
+        name_error.setTextFill(Color.color(.85f, 0, 0));
+        addr_error.setTextFill(Color.color(.85f, 0, 0));
+        cc_error.setTextFill(Color.color(.85f, 0, 0));
+        Label reg_user_textbox_label = new Label("Username: ");
         TextField reg_user_textbox = new TextField();
-        Label reg_pass_textbox_label = new Label("Password:\t");
+        Label reg_pass_textbox_label = new Label("Password: ");
         TextField reg_pass_textbox = new TextField();
-        HBox user_reg_interface = new HBox(reg_user_textbox_label, reg_user_textbox, reg_pass_textbox_label, reg_pass_textbox);
-        Label reg_customer_name_label = new Label("Full Name:\t");
+        Label reg_customer_name_label = new Label("Full Name: ");
         TextField reg_name = new TextField();
-        Label reg_customer_addr_label = new Label("Address:\t");
+        Label reg_customer_addr_label = new Label("Address: ");
         TextField reg_customer_addr = new TextField();
-        HBox user_reg_interface1 = new HBox(reg_customer_name_label,reg_name,reg_customer_addr_label,reg_customer_addr);
-        Label reg_customer_CC_Label = new Label("Credit Card Number:\t");
+        reg_customer_addr.setPrefWidth(300);
+        Label reg_customer_CC_Label = new Label("Credit Card Number: ");
         TextField reg_customer_cc = new TextField();
-        HBox reg_interface2 = new HBox(reg_customer_CC_Label, reg_customer_cc);
+        Label reg_customer_prem_label = new Label("Account Type: ");
+        ComboBox<String> accountType = new ComboBox<>();
+        accountType.getItems().addAll(
+            "Standard (Free)",
+            "Premium ($40.00 w/ First Annual Purchase)");
+        accountType.setValue("Standard (Free)");
+        VBox reg_interface = new VBox(
+            new HBox(reg_user_textbox_label, reg_user_textbox, user_error),
+                new HBox(reg_pass_textbox_label, reg_pass_textbox, pass_error),
+                new HBox(reg_customer_name_label, reg_name, name_error),
+                new HBox(reg_customer_addr_label, reg_customer_addr, addr_error),
+                new HBox(reg_customer_CC_Label, reg_customer_cc, cc_error),
+                new HBox(reg_customer_prem_label, accountType)
+        );
         Button customer_reg_button = new Button("Register");
         //creates accounts when registering
         customer_reg_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Main.customer = new CustomerAccount(
-                    reg_user_textbox.getText(),
-                    reg_pass_textbox.getText(),
-                    reg_name.getText(),
-                    reg_customer_addr.getText(),
-                    reg_customer_cc.getText(),
-                    false,
-                    false);
                 try {
-                    if (!(Main.resubmit = !Main.customer.create())) {
-                        loadCustomerMenu();
-                    } else {
-                        loadCustomerRegister();
+                    boolean error = false;
+                    register_error.setText("");
+                    user_error.setText("");
+                    pass_error.setText("");
+                    name_error.setText("");
+                    addr_error.setText("");
+                    cc_error.setText("");
+                    if (reg_user_textbox.getText().length() < 1) {
+                        error = true;
+                        user_error.setText("A username must be provided");
+                    }
+                    if (reg_pass_textbox.getText().length() < 1) {
+                        error = true;
+                        pass_error.setText("A password must be provided");
+                    }
+                    if (reg_name.getText().length() < 1) {
+                        error = true;
+                        name_error.setText("A name must be provided");
+                    }
+                    if (reg_customer_addr.getText().length() < 1) {
+                        error = true;
+                        addr_error.setText("An address must be provided");
+                    }
+                    if (reg_customer_cc.getText().length() != 16 || reg_customer_cc.getText().matches("[^0-9]")) {
+                        error = true;
+                        cc_error.setText("A valid, 16-digit credit card must be provided");
+                    }
+                    if (!error) {
+                        Main.customer = new CustomerAccount(
+                            reg_user_textbox.getText(),
+                            reg_pass_textbox.getText(),
+                            reg_name.getText(),
+                            reg_customer_addr.getText(),
+                            reg_customer_cc.getText(),
+                            accountType.getValue().equalsIgnoreCase("Premium ($40.00 w/ First Annual Purchase)"),
+                            false);
+                        if (Main.customer.create()) {
+                            loadCustomerMenu();
+                        } else {
+                            Main.customer = null;
+                            register_error.setText("That username is already taken");
+                        }
                     }
                 } catch (Exception e) {
-                    System.out.println("Failed to create customer account: " + e.toString());
-                    Main.resubmit = true;
-                    loadCustomerRegister();
+                    e.printStackTrace();
+                    Main.customer = null;
+                    register_error.setText("An unexpected error occurred");
                 }
             }
         });
@@ -137,65 +180,156 @@ public class Customer {
         back_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Main.resubmit = false;
-                loadCustomerIntro();
+                loadCustomerLogin();
             }
         });
         Main.scene.setRoot(new VBox(
             customer_register_label,
-            error_label,
-            user_reg_interface,
-            user_reg_interface1,
-            reg_interface2,
+            reg_interface,
             customer_reg_button,
+            register_error,
             back_button));
     }
     //loads customer menu
     public static void loadCustomerMenu() {
         Main.cart = Main.cart == null ? new HashMap<>() : Main.cart;
         Label welcome = new Label("Welcome " + Main.customer.getName());
+        Button updateInfo = new Button("Update Information");
+        updateInfo.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadCustomerInfo();
+            }
+        });
         Button Select_Items = new Button("Select Items");
-        Button View_Order = new Button("View Order");
-        Button View_Invoice = new Button("View Invoice");
+        Button View_Cart = new Button("View Cart");
+        Button View_Orders = new Button("View Orders");
         Button logout = new Button("Logout");
-        HBox customer_menu_interface2 = new HBox(5f,View_Order, View_Invoice);
         logout.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Main.resubmit = false;
                 loadCustomerLogin();
             }
         });
         Select_Items.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Main.resubmit = false;
                 loadSelectItemsMenu();
             }
         });
-        View_Order.setOnAction(new EventHandler<ActionEvent>() {
+        View_Cart.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Main.resubmit = false;
-                loadViewOrderScreen();
+                loadViewCartScreen();
             }
         });
-        View_Invoice.setOnAction(new EventHandler<ActionEvent>() {
+        View_Orders.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Main.resubmit = false;
-                loadViewInvoiceScreen();
+                loadViewOrdersScreen();
             }
         });
-        Main.scene.setRoot(new VBox(5f,welcome, Select_Items, customer_menu_interface2, logout));
+        Main.scene.setRoot(new VBox(5f,welcome, updateInfo, Select_Items, View_Cart, View_Orders, logout));
     }
-
+    public static void loadCustomerInfo() {
+        Label header = new Label("Updating Personal Information:");
+        Label update_error = new Label(),
+            pass_error = new Label(),
+            name_error = new Label(),
+            addr_error = new Label(),
+            cc_error = new Label();
+        update_error.setTextFill(Color.color(.85f, 0, 0));
+        pass_error.setTextFill(Color.color(.85f, 0, 0));
+        name_error.setTextFill(Color.color(.85f, 0, 0));
+        addr_error.setTextFill(Color.color(.85f, 0, 0));
+        cc_error.setTextFill(Color.color(.85f, 0, 0));
+        Label passwordLabel = new Label("Change Password (Leave blank to not change): ");
+        TextField password = new TextField();
+        Label nameLabel = new Label("Full Name: ");
+        TextField name = new TextField(Main.customer.getName());
+        Label addressLabel = new Label("Address: ");
+        TextField address = new TextField(Main.customer.getAddress());
+        address.setPrefWidth(300);
+        Label creditCardLabel = new Label("Credit Card Number: ");
+        TextField creditCard = new TextField(Main.customer.getCreditCard());
+        Label premiumLabel = new Label("Account Type: ");
+        ComboBox<String> accountType = new ComboBox<>();
+        // We don't have a yearly reset feature, so we don't allow people to unsubscribe
+        if (Main.customer.isPremium()) {
+            accountType.getItems().addAll("Premium ($40.00 w/ First Annual Purchase)");
+        } else {
+            accountType.getItems().addAll(
+                "Standard (Free)",
+                "Premium ($40.00 w/ First Annual Purchase)");
+        }
+        accountType.setValue(Main.customer.isPremium() ? "Premium ($40.00 w/ First Annual Purchase)" : "Standard (Free)");
+        VBox update_interface = new VBox(
+            new HBox(passwordLabel, password, pass_error),
+            new HBox(nameLabel, name, name_error),
+            new HBox(addressLabel, address, addr_error),
+            new HBox(creditCardLabel, creditCard, cc_error),
+            new HBox(premiumLabel, accountType)
+        );
+        Button update_button = new Button("Update Account");
+        update_button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    boolean error = false;
+                    update_button.setText("");
+                    pass_error.setText("");
+                    name_error.setText("");
+                    addr_error.setText("");
+                    cc_error.setText("");
+                    if (name.getText().length() < 1) {
+                        error = true;
+                        name_error.setText("A name must be provided");
+                    }
+                    if (address.getText().length() < 1) {
+                        error = true;
+                        addr_error.setText("An address must be provided");
+                    }
+                    if (creditCard.getText().length() != 16 || creditCard.getText().matches("[^0-9]")) {
+                        error = true;
+                        cc_error.setText("A valid, 16-digit credit card must be provided");
+                    }
+                    if (!error) {
+                        if (!password.getText().isEmpty()) {
+                            Main.customer.setPassword(password.getText());
+                        }
+                        Main.customer.setName(name.getText());
+                        Main.customer.setAddress(address.getText());
+                        Main.customer.setCreditCard(creditCard.getText());
+                        Main.customer.setPremPaid(Main.customer.premPaid());
+                        Main.customer.setPremium(accountType.getValue().equalsIgnoreCase("Premium ($40.00 w/ First Annual Purchase)"));
+                        if (!Main.customer.update()) {
+                            update_error.setText("An unexpected error occurred");
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    update_error.setText("An unexpected error occurred");
+                }
+            }
+        });
+        Button back_button = new Button("Back");
+        back_button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadCustomerMenu();
+            }
+        });
+        Main.scene.setRoot(new VBox(
+            header,
+            update_interface,
+            update_button,
+            update_error,
+            back_button));
+    }
     public static void loadSelectItemsMenu(){
         Label Select_items_label = new Label("Please select a store catalogue below:");
         Button back_button = new Button("Back");
-
         ArrayList<SupplierAccount> ItemSuppliers = new ArrayList<>();
-
         try {
             ItemSuppliers = SupplierAccount.getSuppliers();
         }catch(Exception e){
@@ -204,7 +338,6 @@ public class Customer {
         int Supplier_Counter = ItemSuppliers.size();
         Node[] supplier_array = new Node[Supplier_Counter];
         for(int i = 0; i < Supplier_Counter; i++){
-
             Button Catalog_Button = new Button(ItemSuppliers.get(i).getName());
             HBox Catalog_UI = new HBox(Catalog_Button);
             supplier_array[i]=Catalog_UI;
@@ -212,27 +345,24 @@ public class Customer {
             Catalog_Button.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    Main.resubmit = false;
-                    loadAddToOrder(sup);
+                    loadAddToCart(sup);
                 }
             });
         }
-
         ScrollPane oiPane = new ScrollPane(new VBox(supplier_array));
         oiPane.setPrefViewportHeight(Main.scene.getHeight());
-        oiPane.setPrefViewportWidth(Math.min(Main.scene.getWidth() * 2, Main.scene.getWidth()));
+        oiPane.setPrefViewportWidth(Main.scene.getWidth());
         oiPane.setPrefSize(Main.scene.getWidth(), Main.scene.getHeight());
         back_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Main.resubmit = false;
                 loadCustomerMenu();
             }
         });
         Main.scene.setRoot(new VBox(Select_items_label, oiPane, back_button));
     }
-    public static void loadAddToOrder(SupplierAccount sup){
-        Label welcomeToStore = new Label("Welcome to the catalogue for " + sup.getName());
+    public static void loadAddToCart(SupplierAccount sup){
+        Label welcomeToStore = new Label("Welcome to the catalogue for " + sup.getName() + "!");
         int supID = sup.id();
         int itemCount = 0;
         ArrayList<Item> temp = new ArrayList<>();
@@ -245,19 +375,20 @@ public class Customer {
         ArrayList<Item> itemList = temp;
         Node[] listOfItems = new Node[itemCount];
         TextField[] buyAmounts = new TextField[itemCount];
+        Label add_error = new Label();
+        add_error.setTextFill(Color.color(0.85f, 0, 0));
         for(int i = 0; i < itemCount; i++){
             Item item = itemList.get(i);
             Label itemName = new Label(item.getItemName());
             Label itemInfo = new Label(item.getItemDesc());
-            Label itemPrc = new Label();
-            if(Main.customer.isPremium()){
-                itemPrc.setText("For the price of :\t" + item.getItemPremCost());
-            }else{
-                itemPrc.setText("For the price of :\t" + item.getItemRegCost());
-            }
-            Button reduce = new Button("<"),
-                increase = new Button(">");
+            HBox itemPrc = new HBox(
+                5f,
+                new Label(String.format("Regular Price: %,.2f", item.getItemRegCost())),
+                new Label(String.format("Premium Price: %,.2f", item.getItemPremCost())));
+            Button reduce = new Button("-"),
+                increase = new Button("+");
             TextField qty = new TextField("0");
+            qty.setMaxWidth(35);
             buyAmounts[i] = qty;
             reduce.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -269,6 +400,8 @@ public class Customer {
                         value = 0;
                     }
                     qty.setText(String.valueOf(value > 0 ? --value : 0));
+                    add_error.setText("");
+                    add_error.setTextFill(Color.color(0.85f, 0, 0));
                 }
             });
             increase.setOnAction(new EventHandler<ActionEvent>() {
@@ -281,6 +414,8 @@ public class Customer {
                         value = 0;
                     }
                     qty.setText(String.valueOf(++value));
+                    add_error.setText("");
+                    add_error.setTextFill(Color.color(0.85f, 0, 0));
                 }
             });
             HBox buyUI = new HBox(5f, reduce, qty, increase);
@@ -292,31 +427,39 @@ public class Customer {
         oiPane.setPrefViewportHeight(Main.scene.getHeight());
         oiPane.setPrefViewportWidth(Main.scene.getWidth());
         oiPane.setPrefSize(Main.scene.getWidth(), Main.scene.getHeight());
-        Button buyButton = new Button("Add items to cart");
-        buyButton.setOnAction(new EventHandler<ActionEvent>() {
+        Button addButton = new Button("Add items to cart");
+        addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                for (int i = 0; i < buyAmounts.length; i++) {
-                    Item item = itemList.get(i);
-                    int value,
-                        id = item.id();
-                    try {
-                        value = Integer.parseInt(buyAmounts[i].getText());
-                        buyAmounts[i].setText("0");
-                    } catch (Exception ex) {
-                        value = 0;
-                    }
-                    if (value > 0) {
-                        if (Main.cart.containsKey(id)) {
-                            Main.cart.get(id).setItemQty(Main.cart.get(id).getItemQty() + value);
-                        } else {
-                            try {
+                try {
+                    boolean added = false;
+                    add_error.setText("");
+                    add_error.setTextFill(Color.color(0.85f, 0, 0));
+                    for (int i = 0; i < buyAmounts.length; i++) {
+                        Item item = itemList.get(i);
+                        int value,
+                            id = item.id();
+                        try {
+                            value = Integer.parseInt(buyAmounts[i].getText());
+                            buyAmounts[i].setText("0");
+                        } catch (Exception ex) {
+                            value = 0;
+                        }
+                        if (value > 0) {
+                            if (Main.cart.containsKey(id)) {
+                                Main.cart.get(id).setItemQty(Main.cart.get(id).getItemQty() + value);
+                            } else {
                                 Main.cart.put(id, new OrderItem(0, item.id(), value, 0, (byte)1));
-                            } catch (Exception ex) {
-                                // maybe do something?
                             }
+                            added = true;
                         }
                     }
+                    if (added) {
+                        add_error.setText("All items were added to your cart");
+                        add_error.setTextFill(Color.color(0, 0.85f, 0));
+                    }
+                } catch (Exception ex) {
+                    add_error.setText("An unexpected error occurred");
                 }
             }
         });
@@ -324,16 +467,15 @@ public class Customer {
         back_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Main.resubmit = false;
                 loadSelectItemsMenu();
             }
         });
-        Main.scene.setRoot(new VBox(welcomeToStore, oiPane, buyButton, back_button));
+        Main.scene.setRoot(new VBox(welcomeToStore, oiPane, addButton, add_error, back_button));
     }
-    public static void loadViewOrderScreen() {
+    public static void loadViewCartScreen() {
         float runningTotal = 0;
         Label View_Order_label = new Label("Current order details:"),
-            empty = new Label("Your cart is currently empty");
+                empty = new Label("Your cart is currently empty");
         Node[] orderItems = new Node[Main.cart.size()];
         int i = 0;
         for (int id : Main.cart.keySet()) {
@@ -343,17 +485,17 @@ public class Customer {
                 float cost = Main.customer.isPremium() ? item.getItemPremCost() : item.getItemRegCost();
                 runningTotal += Main.cart.get(id).getItemQty() * cost;
                 orderItems[i] = new VBox(
-                    new Label(item.getItemName() + ", " + item.getItemDesc()),
-                    new Label("Ordered: " + Main.cart.get(id).getItemQty()),
-                    new Label(String.format("Cost: $%,.2f", Main.cart.get(id).getItemQty() * cost)),
-                    new Label());
+                        new Label(item.getItemName() + ", " + item.getItemDesc()),
+                        new Label("Ordered: " + Main.cart.get(id).getItemQty()),
+                        new Label(String.format("Cost: $%,.2f", Main.cart.get(id).getItemQty() * cost)),
+                        new Label());
             } catch (Exception ex) {
                 // maybe do something...
             }
             i++;
         }
         float totalItemCost = runningTotal,
-            premCost = Main.customer.isPremium() && !Main.customer.premPaid() ? 40 : 0;
+                premCost = Main.customer.isPremium() && !Main.customer.premPaid() ? 40 : 0;
         ScrollPane oiPane = new ScrollPane(new VBox(orderItems));
         oiPane.setPrefViewportHeight(Main.scene.getHeight());
         oiPane.setPrefViewportWidth(Main.scene.getWidth());
@@ -361,8 +503,8 @@ public class Customer {
         Label total = new Label(String.format("Total Cost: $%,.2f", totalItemCost + premCost));
         ComboBox<String> deliveryType = new ComboBox<>();
         deliveryType.getItems().addAll(
-            "Mail Delivery ($3.00 Surcharge)",
-            "In-Store Pickup (Free)");
+                "In-Store Pickup (Free)",
+                "Mail Delivery ($3.00 Surcharge)");
         deliveryType.setValue("In-Store Pickup (Free)");
         deliveryType.valueProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -371,40 +513,86 @@ public class Customer {
                 total.setText(String.format("Total Cost: $%,.2f", totalItemCost + premCost + deliveryCost));
             }
         });
-        Label premPurchase = new Label(premCost > 0 ? String.format("Premium Cost: %,.2f", premCost) : "");
         TextField creditCard = new TextField(Main.customer.getCreditCard());
-        Label invalidCC = new Label("");
+        Label invalidCC = new Label();
         invalidCC.setTextFill(Color.color(0.85f, 0, 0));
         HBox ccInfo = new HBox(creditCard, invalidCC);
+        Node premInfo;
+        if (Main.customer.isPremium() && !Main.customer.premPaid()) {
+            Button switchAndLose = new Button("Switch and Lose");
+            switchAndLose.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    try {
+                        Main.customer.setPremium(false);
+                        Main.customer.update();
+                        loadViewCartScreen();
+                    } catch (Exception ex) {
+                        // maybe do something
+                    }
+                }
+            });
+            premInfo = new VBox(
+                    new Label(String.format("Premium Subscription Fee: $%,.2f", premCost)),
+                    new HBox(new Label("Switch to a standard account to not pay a subscription fee, but pay more on items: "), switchAndLose));
+        } else if (Main.customer.isPremium()) {
+            premInfo = new HBox(new Label("Thank you for being a premium customer!"));
+        } else {
+            Button switchAndSave = new Button("Switch and Save!");
+            switchAndSave.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    try {
+                        Main.customer.setPremium(true);
+                        Main.customer.update();
+                        loadViewCartScreen();
+                    } catch (Exception ex) {
+                        // maybe do something
+                    }
+                }
+            });
+            premInfo = new VBox(
+                    new HBox(new Label("Switch to a premium account to save on all items: "), switchAndSave),
+                    new Label("Premium subscriptions cost $40.00 and are billed to your first purchase each year, starting with this purchase"));
+        }
+        Label buy_error = new Label();
+        buy_error.setTextFill(Color.color(0.85f, 0, 0));
         Button buyButton = new Button("Purchase Order");
         buyButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                byte deliveryMethod = deliveryType.getValue().equalsIgnoreCase("In-Store Pickup (Free)") ? 0 : (byte)1;
-                float deliveryCost = (float)deliveryMethod * 3;
-                int date = java.time.LocalDate.now().getYear() * 10000 + java.time.LocalDate.now().getMonthValue() * 100 + java.time.LocalDate.now().getDayOfYear();
-                Order order = new Order(Main.customer.id(), (byte)0, date, totalItemCost + premCost + deliveryCost, premCost, deliveryMethod, deliveryCost);
                 try {
-                    order.create();
-                    if (order.purchase(creditCard.getText())) {
-                        invalidCC.setText("");
-                        for (OrderItem oi : Main.cart.values()) {
-                            Item item = Item.getItem(oi.getItemID());
-                            float lineCost = oi.getItemQty() * (Main.customer.isPremium() ? item.getItemPremCost() : item.getItemRegCost());
-                            OrderItem newOI = new OrderItem(order.id(), oi.getItemID(), oi.getItemQty(), lineCost, oi.getOrderItemStatus());
-                            newOI.create();
+                    buy_error.setText("");
+                    invalidCC.setText("");
+                    if (creditCard.getText().length() == 16 && !creditCard.getText().matches("[^0-9]")) {
+                        byte deliveryMethod = deliveryType.getValue().equalsIgnoreCase("In-Store Pickup (Free)") ? 0 : (byte) 1;
+                        float deliveryCost = (float) deliveryMethod * 3;
+                        int date = java.time.LocalDate.now().getYear() * 10000 + java.time.LocalDate.now().getMonthValue() * 100 + java.time.LocalDate.now().getDayOfMonth();
+                        Order order = new Order(Main.customer.id(), (byte)1, date, totalItemCost + premCost + deliveryCost, premCost, deliveryMethod, deliveryCost);
+                        order.create();
+                        if (order.purchase(creditCard.getText())) {
+                            invalidCC.setText("");
+                            for (OrderItem oi : Main.cart.values()) {
+                                Item item = Item.getItem(oi.getItemID());
+                                float lineCost = oi.getItemQty() * (Main.customer.isPremium() ? item.getItemPremCost() : item.getItemRegCost());
+                                OrderItem newOI = new OrderItem(order.id(), oi.getItemID(), oi.getItemQty(), lineCost, (byte)1);
+                                newOI.create();
+                            }
+                            order.update();
+                            Main.cart = null;
+                            Main.customer.setPremPaid(Main.customer.premPaid() || order.getPremCost() > 0);
+                            Main.customer.setCreditCard(creditCard.getText());
+                            Main.customer.update();
+                            loadViewInvoiceScreen(order.id());
+                        } else {
+                            order.delete();
+                            invalidCC.setText("Invalid credit card or insufficient funds");
                         }
-                        order.update();
-                        Main.cart = null;
-                        loadViewInvoicesScreen(order.id());
-                        // go to view invoice screen using order id...
                     } else {
-                        order.delete();
                         invalidCC.setText("Invalid credit card or insufficient funds");
                     }
                 } catch (Exception ex) {
-                    Main.resubmit = true;
-                    loadViewOrderScreen();
+                    buy_error.setText("An unexpected error occurred");
                 }
             }
         });
@@ -412,36 +600,34 @@ public class Customer {
         back_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Main.resubmit = false;
                 loadCustomerMenu();
             }
         });
         if (Main.cart.size() > 0) {
             Main.scene.setRoot(new VBox(
-                5f,
-                View_Order_label,
-                oiPane,
-                deliveryType,
-                premPurchase,
-                total,
-                ccInfo,
-                buyButton,
-                new Label(),
-                back_button));
+                    5f,
+                    View_Order_label,
+                    oiPane,
+                    deliveryType,
+                    premInfo,
+                    total,
+                    ccInfo,
+                    buyButton,
+                    buy_error,
+                    back_button));
         } else {
             Main.scene.setRoot(new VBox(
-                5f,
-                View_Order_label,
-                empty,
-                back_button));
+                    5f,
+                    View_Order_label,
+                    empty,
+                    back_button));
         }
     }
-    public static void loadViewInvoiceScreen() {
+    public static void loadViewOrdersScreen() {
         Button back_button = new Button("Back");
         back_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Main.resubmit = false;
                 loadCustomerMenu();
             }
         });
@@ -455,17 +641,34 @@ public class Customer {
             Node[] invoiceItems = new Node[invoices.size()];
             for (int i = 0; i < invoices.size(); i++) {
                 Order invoice = invoices.get(i);
-                String date = String.format("%d/%d/%d", invoice.getOrderDate() % 10000 / 100, invoice.getOrderDate() % 100, invoice.getOrderDate() / 1000);
-                Button invoiceMenu = new Button(invoice.getInvoiceID() + ", " + date);
+                String date = String.format("%d/%d/%d", invoice.getOrderDate() % 10000 / 100, invoice.getOrderDate() % 100, invoice.getOrderDate() / 10000),
+                    deliveryType = invoice.getOrderDelivery() == 0 ? "In-Store Pickup" : "Mail Delivery",
+                    orderStatus = "";
+                switch (invoice.getOrderStatus()) {
+                    case 0: orderStatus = "Not Purchased"; break;
+                    case 1: orderStatus = "Purchased, not Started"; break;
+                    case 2: orderStatus = "Partially Filled"; break;
+                    case 3: orderStatus = "Filled"; break;
+                    case 4: orderStatus = "Partially Shipped"; break;
+                    case 5: orderStatus = "Shipped"; break;
+                }
+                Button invoiceMenu = new Button("View Invoice");
                 invoiceMenu.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        loadViewInvoicesScreen(invoice.id());
+                        loadViewInvoiceScreen(invoice.id());
                     }
                 });
-                invoiceItems[i] = invoiceMenu;
+                VBox orderMenu = new VBox(
+                    new Label("Order #" + invoice.id()),
+                    new Label("Order Date: " + date),
+                    new Label("Delivery Method: " + deliveryType),
+                    new Label("Order Status: " + orderStatus),
+                    new HBox(invoiceMenu)
+                );
+                invoiceItems[i] = orderMenu;
             }
-            ScrollPane iPane = new ScrollPane(new VBox(invoiceItems));
+            ScrollPane iPane = new ScrollPane(new VBox(10f, invoiceItems));
             iPane.setPrefViewportHeight(Main.scene.getHeight());
             iPane.setPrefViewportWidth(Main.scene.getWidth());
             iPane.setPrefSize(Main.scene.getWidth(), Main.scene.getHeight());
@@ -473,11 +676,11 @@ public class Customer {
             Main.scene.setRoot(new VBox(view_invoice_label, iPane, back_button));
         } else {
             Main.scene.setRoot(new VBox(
-                new Label("You do not have any historical orders."),
-                back_button));
+                    new Label("You do not have any historical orders."),
+                    back_button));
         }
     }
-    public static void loadViewInvoicesScreen(int orderID) {
+    public static void loadViewInvoiceScreen(int orderID) {
         Order order = null;
         try {
             order = Order.getOrder(orderID);
@@ -488,7 +691,6 @@ public class Customer {
         back_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Main.resubmit = false;
                 loadCustomerMenu();
             }
         });
@@ -496,7 +698,7 @@ public class Customer {
             Label view_invoice_label = new Label("This order does not exist");
             Main.scene.setRoot(new VBox(view_invoice_label, back_button));
         } else {
-            String date = String.format("%d/%d/%d", order.getOrderDate() % 10000 / 100, order.getOrderDate() % 100, order.getOrderDate() / 1000);
+            String date = String.format("%d/%d/%d", order.getOrderDate() % 10000 / 100, order.getOrderDate() % 100, order.getOrderDate() / 10000);
             Label view_invoice_label = new Label("Viewing invoice " + order.getInvoiceID() + " from " + date);
             ArrayList<OrderItem> orderItems = new ArrayList<>();
             try {
@@ -514,8 +716,10 @@ public class Customer {
                     // do something here
                 }
             }
-            Label authNumber = new Label("Authorization Number: " + order.getPurchaseAuth()),
-                total = new Label(String.format("Total Cost: %,.2f", order.getOrderCost()));
+            Label deliveryCost = new Label(order.getOrderDelivery() == 1 ? "Mail Delivery: $3.00" : "In-Store Pickup: $0.00"),
+                premCost = new Label(order.getPremCost() > 0 ? String.format("Premium Subscription Fee: $%,.2f", order.getPremCost()) : ""),
+                total = new Label(String.format("Total Cost: %,.2f", order.getOrderCost())),
+                authNumber = new Label("Authorization Number: " + order.getPurchaseAuth());
             ScrollPane oiPane = new ScrollPane(new VBox(oiList));
             oiPane.setPrefViewportHeight(Main.scene.getHeight());
             oiPane.setPrefViewportWidth(Main.scene.getWidth());
@@ -523,8 +727,10 @@ public class Customer {
             Main.scene.setRoot(new VBox(
                 view_invoice_label,
                 oiPane,
-                authNumber,
+                deliveryCost,
+                premCost,
                 total,
+                authNumber,
                 back_button));
         }
     }

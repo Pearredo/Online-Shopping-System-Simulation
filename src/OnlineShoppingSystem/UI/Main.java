@@ -16,18 +16,10 @@ public class Main extends Application {
     // These are used in the Customer and Supplier classes
     static Stage stage;
     public static Scene scene;
-    public static VBox menu_loading,
-        menu_welcome,
-        menu_customer,
-        menu_supplier,
-        menu_customer_login,
-        menu_customer_register,
-        menu_supplier_login,
-        menu_supplier_register;
+    public static VBox menu_loading;
     public static CustomerAccount customer;
     public static SupplierAccount supplier;
     public static HashMap<Integer, OrderItem> cart;
-    public static boolean resubmit = false;
     public static void loadWelcomeMenu() {
         customer = null;
         supplier = null;
@@ -37,14 +29,14 @@ public class Main extends Application {
         supplier_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Supplier.loadSupplierIntro();
+                Supplier.loadSupplierLogin();
             }
         });
         Button customer_button = new Button("Customer");
         customer_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Customer.loadCustomerIntro();
+                Customer.loadCustomerLogin();
             }
         });
         HBox header = new HBox (title1);
