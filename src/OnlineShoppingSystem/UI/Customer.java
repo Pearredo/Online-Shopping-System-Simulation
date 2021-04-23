@@ -515,7 +515,7 @@ public class Customer {
             i++;
         }
         float totalItemCost = runningTotal,
-                premCost = Main.customer.isPremium() && !Main.customer.premPaid() ? 40 : 0;
+            premCost = Main.customer.isPremium() && !Main.customer.premPaid() ? 40 : 0;
         ScrollPane oiPane = new ScrollPane(new VBox(orderItems));
         oiPane.setPrefViewportHeight(Main.scene.getHeight());
         oiPane.setPrefViewportWidth(Main.scene.getWidth());
@@ -523,8 +523,8 @@ public class Customer {
         Label total = new Label(String.format("Total Cost: $%,.2f", totalItemCost + premCost));
         ComboBox<String> deliveryType = new ComboBox<>();
         deliveryType.getItems().addAll(
-                "In-Store Pickup (Free)",
-                "Mail Delivery ($3.00 Surcharge)");
+            "In-Store Pickup (Free)",
+            "Mail Delivery ($3.00 Surcharge)");
         deliveryType.setValue("In-Store Pickup (Free)");
         deliveryType.valueProperty().addListener(new ChangeListener<String>() {
             @Override

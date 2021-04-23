@@ -81,7 +81,7 @@ public class Order implements DataObject {
         serial.put(DataManager.encode(orderDate), 0, 4);
         serial.put(DataManager.encode(orderCost), 0, 4);
         serial.put(DataManager.encode(premCost), 0, 4);
-        serial.put(17, orderDelivery);
+        serial.put(21, orderDelivery);
         serial.get();
         serial.put(DataManager.encode(deliveryCost), 0, 4);
         serial.put(DataManager.encode(invoiceID), 0, 4);
@@ -171,7 +171,6 @@ public class Order implements DataObject {
     }
     public static boolean syncOrderStatus(int orderID) throws Exception {
         Order order = Order.getOrder(orderID);
-        order.setOrderStatus((byte)5);
         boolean all3 = true,
             all2 = true,
             all1 = true,

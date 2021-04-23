@@ -33,7 +33,4 @@ Generates, submits, and receives Banking System data requests but does not direc
 
 ##To-Do:
 Improve navigation with more back/logout/exit/view cart buttons  
-Improve input handling with sanitation and format verification  
-Add method on order purchase screen and in customer information menu to purchase premium subscription  
-Finish supplier methods for filling/shipping orders  
-Add menus for updating Customer/Supplier personal information  
+    
