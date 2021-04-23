@@ -568,12 +568,17 @@ public class Supplier {
                 @Override
                 public void handle(ActionEvent event) {
                     curItem.setReservedQty(curItem.getReservedQty() + orderItem.getItemQty());
+                    orderItem.setOrderItemStatus((byte)2);
                     try {
-                        curItem.update();
+                        if (Order.syncOrderStatus(orderItem.getOrderItemStatus())) {
+                            curItem.update();
+                            orderItem.update();
+                            loadSupplierOrders();
+                        }
                     } catch (Exception ex) {
                         ex.printStackTrace();
+                        // do something here...
                     }
-                    loadSupplierOrders();
                 }
             });
             Button ship = new Button("Ship");
@@ -582,12 +587,17 @@ public class Supplier {
                 public void handle(ActionEvent event) {
                     curItem.setItemQty(curItem.getItemQty() - orderItem.getItemQty());
                     curItem.setReservedQty(curItem.getReservedQty() - orderItem.getItemQty());
+                    orderItem.setOrderItemStatus((byte)3);
                     try {
-                        curItem.update();
+                        if (Order.syncOrderStatus(orderItem.getOrderItemStatus())) {
+                            curItem.update();
+                            orderItem.update();
+                            loadSupplierOrders();
+                        }
                     } catch (Exception ex) {
                         ex.printStackTrace();
+                        // do something here...
                     }
-                    loadSupplierOrders();
                 }
             });
             oiMenus[i] = new VBox(oiName, new HBox(

@@ -15,19 +15,22 @@ public class CustomerAccount implements DataObject {
     private final int nameLength = 40;
     private String address;
     private final int addressLength = 100;
+    private String phoneNumber;
+    private final int phoneNumberLength = 14;
     private String creditCard;
     private final int creditCardLength = 16;
     private boolean isPremium;
     private boolean premPaid;
-    private final int recordLength = 790;
+    private final int recordLength = 846;
     public String dataFile = "FILE_DATA_CUSTOMERACCOUNTS";
     // Constructors
-    public CustomerAccount(String username, String password, String name, String address, String creditCard, boolean isPremium, boolean premPaid) {
+    public CustomerAccount(String username, String password, String name, String address, String phoneNumber, String creditCard, boolean isPremium, boolean premPaid) {
         customerID = 0;
         this.username = username.substring(0, Math.min(username.length(), usernameLength));
         this.password = password.substring(0, Math.min(password.length(), passwordLength));
         this.name = name.substring(0, Math.min(name.length(), nameLength));
         this.address = address.substring(0, Math.min(address.length(), addressLength));
+        this.phoneNumber = phoneNumber.substring(0, Math.min(phoneNumber.length(), phoneNumberLength));
         this.creditCard = creditCard.substring(0, Math.min(creditCard.length(), creditCardLength));
         this.isPremium = isPremium;
         this.premPaid = premPaid;
@@ -50,6 +53,8 @@ public class CustomerAccount implements DataObject {
     public void setName(String name) { this.name = name.substring(0, Math.min(name.length(), nameLength)); }
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address.substring(0, Math.min(address.length(), addressLength)); }
+    public String getPhoneNumber() { return phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber.substring(0, Math.min(phoneNumber.length(), phoneNumberLength)); }
     public String getCreditCard() { return creditCard; }
     public void setCreditCard(String creditCard) { this.creditCard = creditCard.substring(0, Math.min(creditCard.length(), creditCardLength)); }
     public boolean isPremium() { return isPremium; }
@@ -64,6 +69,7 @@ public class CustomerAccount implements DataObject {
         password = DataManager.decodeString(Arrays.copyOfRange(record, i, i += passwordLength * 4));
         name = DataManager.decodeString(Arrays.copyOfRange(record, i, i += nameLength * 4));
         address = DataManager.decodeString(Arrays.copyOfRange(record, i, i += addressLength * 4));
+        phoneNumber = DataManager.decodeString(Arrays.copyOfRange(record, i, i += phoneNumberLength * 4));
         creditCard = DataManager.decodeString(Arrays.copyOfRange(record, i, i += creditCardLength * 4));
         isPremium = record[i++] != 0;
         premPaid = record[i] != 0;
@@ -78,6 +84,7 @@ public class CustomerAccount implements DataObject {
         serial.put(DataManager.encode(password, passwordLength), 0, passwordLength * 4);
         serial.put(DataManager.encode(name, nameLength), 0, nameLength * 4);
         serial.put(DataManager.encode(address, addressLength), 0, addressLength * 4);
+        serial.put(DataManager.encode(phoneNumber, phoneNumberLength), 0, phoneNumberLength * 4);
         serial.put(DataManager.encode(creditCard, creditCardLength), 0, creditCardLength * 4);
         serial.put(recordLength - 2, isPremium ? (byte)1 : 0);
         serial.get();
@@ -93,6 +100,7 @@ public class CustomerAccount implements DataObject {
             "Password: %s\n" +
             "Name: %s\n" +
             "Address: %s\n" +
+            "Phone NUmber: %s\n" +
             "Credit Card: %s\n" +
             "Is Premium: %s\n" +
             "Premium Paid?: %s\n",
@@ -101,6 +109,7 @@ public class CustomerAccount implements DataObject {
             password,
             name,
             address,
+            phoneNumber,
             creditCard,
             isPremium ? "Yes" : "No",
             premPaid ? "Yes" : "No");
