@@ -265,7 +265,7 @@ public class Customer {
         phone_error.setTextFill(Color.color(.85f, 0, 0));
         cc_error.setTextFill(Color.color(.85f, 0, 0));
         Label passwordLabel = new Label("Change Password (Leave blank to not change): ");
-        TextField password = new TextField();
+        PasswordField password = new PasswordField();
         Label nameLabel = new Label("Full Name: ");
         TextField name = new TextField(Main.customer.getName());
         Label addressLabel = new Label("Address: ");
@@ -638,23 +638,13 @@ public class Customer {
             }
         });
         if (Main.cart.size() > 0) {
-            Main.scene.setRoot(new VBox(
-                    5f,
-                    View_Order_label,
-                    oiPane,
-                    deliveryType,
-                    premInfo,
-                    total,
-                    ccInfo,
-                    buyButton,
-                    buy_error,
-                    back_button));
+            VBox view_cart_with_items_interface =new VBox(5f, View_Order_label, oiPane, deliveryType, premInfo, total, ccInfo, buyButton, buy_error, back_button);
+            view_cart_with_items_interface.setBackground(customerBackground());
+            Main.scene.setRoot(view_cart_with_items_interface);
         } else {
-            Main.scene.setRoot(new VBox(
-                    5f,
-                    View_Order_label,
-                    empty,
-                    back_button));
+            VBox view_cart_without_items_interface = new VBox(5f, View_Order_label, empty, back_button);
+            view_cart_without_items_interface.setBackground(customerBackground());
+            Main.scene.setRoot(view_cart_without_items_interface);
         }
     }
     public static void loadViewOrdersScreen() {
@@ -707,11 +697,14 @@ public class Customer {
             iPane.setPrefViewportWidth(Main.scene.getWidth());
             iPane.setPrefSize(Main.scene.getWidth(), Main.scene.getHeight());
             Label view_invoice_label = new Label("Here are your past orders:");
-            Main.scene.setRoot(new VBox(view_invoice_label, iPane, back_button));
+
+            VBox view_orders_with_orders =new VBox(view_invoice_label, iPane, back_button);
+            view_orders_with_orders.setBackground(customerBackground());
+            Main.scene.setRoot(view_orders_with_orders);
         } else {
-            Main.scene.setRoot(new VBox(
-                    new Label("You do not have any historical orders."),
-                    back_button));
+            VBox view_order_without_orders = new VBox(new Label("You do not have any historical orders."), back_button);
+            view_order_without_orders.setBackground(customerBackground());
+            Main.scene.setRoot(view_order_without_orders);
         }
     }
     public static void loadViewInvoiceScreen(int orderID) {
@@ -730,7 +723,9 @@ public class Customer {
         });
         if (order == null) {
             Label view_invoice_label = new Label("This order does not exist");
-            Main.scene.setRoot(new VBox(view_invoice_label, back_button));
+            VBox no_invoice_interface = new VBox(view_invoice_label, back_button);
+            no_invoice_interface.setBackground(customerBackground());
+            Main.scene.setRoot(no_invoice_interface);
         } else {
             String date = String.format("%d/%d/%d", order.getOrderDate() % 10000 / 100, order.getOrderDate() % 100, order.getOrderDate() / 10000);
             Label view_invoice_label = new Label("Viewing invoice " + order.getInvoiceID() + " from " + date);
@@ -738,7 +733,7 @@ public class Customer {
             try {
                 orderItems = OrderItem.getOrderItems(orderID, 'o');
             } catch (Exception ex) {
-                // do something here
+                ex.printStackTrace();
             }
             Node[] oiList = new Node[orderItems.size()];
             for (int i = 0; i < orderItems.size(); i++) {
@@ -747,7 +742,7 @@ public class Customer {
                     Item item = Item.getItem(oi.getItemID());
                     oiList[i] = new Label(String.format("%s, %d unit(s): %,.2f", item.getItemName(), oi.getItemQty(), oi.getLineCost()));
                 } catch (Exception ex) {
-                    // do something here
+                   ex.printStackTrace();
                 }
             }
             Label deliveryCost = new Label(order.getOrderDelivery() == 1 ? "Mail Delivery: $3.00" : "In-Store Pickup: $0.00"),
@@ -758,14 +753,9 @@ public class Customer {
             oiPane.setPrefViewportHeight(Main.scene.getHeight());
             oiPane.setPrefViewportWidth(Main.scene.getWidth());
             oiPane.setPrefSize(Main.scene.getWidth(), Main.scene.getHeight());
-            Main.scene.setRoot(new VBox(
-                view_invoice_label,
-                oiPane,
-                deliveryCost,
-                premCost,
-                total,
-                authNumber,
-                back_button));
+            VBox view_invoice_with_invoice = new VBox(view_invoice_label, oiPane, deliveryCost, premCost, total, authNumber, back_button);
+            view_invoice_with_invoice.setBackground(customerBackground());
+            Main.scene.setRoot(view_invoice_with_invoice);
         }
     }
 }
