@@ -567,8 +567,8 @@ public class Customer {
                 }
             });
             premInfo = new VBox(
-                    new Label(String.format("Premium Subscription Fee: $%,.2f", premCost)),
-                    new HBox(new Label("Switch to a standard account to not pay a subscription fee, but pay more on items: "), switchAndLose));
+                new Label(String.format("Premium Subscription Fee: $%,.2f", premCost)),
+                new HBox(new Label("Switch to a standard account to not pay a subscription fee, but pay more on items: "), switchAndLose));
         } else if (Main.customer.isPremium()) {
             premInfo = new HBox(new Label("Thank you for being a premium customer!"));
         } else {
@@ -630,6 +630,14 @@ public class Customer {
                 }
             }
         });
+        Button cancelButton = new Button("Cancel Order");
+        cancelButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Main.cart = new HashMap<>();
+                loadViewCartScreen();
+            }
+        });
         Button back_button = new Button("Back");
         back_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -638,7 +646,18 @@ public class Customer {
             }
         });
         if (Main.cart.size() > 0) {
-            VBox view_cart_with_items_interface =new VBox(5f, View_Order_label, oiPane, deliveryType, premInfo, total, ccInfo, buyButton, buy_error, back_button);
+            VBox view_cart_with_items_interface = new VBox(
+                5f,
+                View_Order_label,
+                oiPane,
+                deliveryType,
+                premInfo,
+                total,
+                ccInfo,
+                buyButton,
+                buy_error,
+                cancelButton,
+                back_button);
             view_cart_with_items_interface.setBackground(customerBackground());
             Main.scene.setRoot(view_cart_with_items_interface);
         } else {

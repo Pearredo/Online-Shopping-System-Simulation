@@ -58,7 +58,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         stage = primaryStage;
         menu_loading = new VBox(new Label("Loading..."));
-        scene = new Scene(menu_loading, 640, 480);
+        scene = new Scene(menu_loading, 800, 600);
         primaryStage.setTitle("Online Shopping System");
         primaryStage.setScene(scene);
         primaryStage.show();
