@@ -24,7 +24,7 @@ public class Supplier {
         Label user_textbox_label = new Label("Username: ");
         TextField user_textbox = new TextField();
         Label password_textbox_label = new Label("Password: ");
-        TextField password_textbox = new TextField();
+        PasswordField password_textbox = new PasswordField();
         VBox user_login_interface = new VBox(
             new HBox(user_textbox_label, user_textbox, user_error),
             new HBox(password_textbox_label, password_textbox, pass_error));
@@ -88,7 +88,7 @@ public class Supplier {
         Label sup_reg_textbox_label = new Label("Username: ");
         TextField sup_reg_textbox = new TextField();
         Label sup_pass_textbox_label = new Label("Password: ");
-        TextField sup_pass_textbox = new TextField();
+        PasswordField sup_pass_textbox = new PasswordField();
         Label supplier_ven_textbox_label = new Label("Name: ");
         TextField supplier_ven_textbox = new TextField();
         VBox sup_reg_interface = new VBox(
@@ -186,7 +186,7 @@ public class Supplier {
         pass_error.setTextFill(Color.color(.85f, 0, 0));
         name_error.setTextFill(Color.color(.85f, 0, 0));
         Label passwordLabel = new Label("Change Password (Leave blank to not change): ");
-        TextField password = new TextField();
+        PasswordField password = new PasswordField();
         Label nameLabel = new Label("Full Name: ");
         TextField name = new TextField(Main.supplier.getName());
         VBox update_interface = new VBox(
