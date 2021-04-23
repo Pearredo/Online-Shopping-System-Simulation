@@ -62,7 +62,8 @@ public class Item implements DataObject {
         itemDesc = DataManager.decodeString(Arrays.copyOfRange(record, i, i += itemDescLength * 4));
         itemRegCost = DataManager.decodeFloat(Arrays.copyOfRange(record, i, i += 4));
         itemPremCost = DataManager.decodeFloat(Arrays.copyOfRange(record, i, i += 4));
-        itemQty = DataManager.decodeInt(Arrays.copyOfRange(record, i, i + 4));
+        itemQty = DataManager.decodeInt(Arrays.copyOfRange(record, i, i += 4));
+        reservedQty = DataManager.decodeInt(Arrays.copyOfRange(record, i, i + 4));
     }
     public int id() { return itemID; }
     public void setID(int id) { itemID = id; }
@@ -76,6 +77,7 @@ public class Item implements DataObject {
         serial.put(DataManager.encode(itemRegCost), 0, 4);
         serial.put(DataManager.encode(itemPremCost), 0, 4);
         serial.put(DataManager.encode(itemQty), 0, 4);
+        serial.put(DataManager.encode(reservedQty), 0, 4);
         return serial.array();
     }
     public String dataFile() { return dataFile; }
