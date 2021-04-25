@@ -36,9 +36,9 @@ public class Customer {
         TextField user_textbox = new TextField();
         Label password_label = new Label("Password:\t\t");
         PasswordField password_textbox = new PasswordField();
-        VBox user_login_interface = new VBox(
-            new HBox(user_textbox_label, user_textbox, user_error),
-            new HBox(password_label, password_textbox, password_error));
+        VBox user_login_interface = new VBox(10f,
+            new HBox(5f,user_textbox_label, user_textbox, user_error),
+            new HBox(5f,password_label, password_textbox, password_error));
         Button customer_login_button = new Button("Log in");
 
         customer_login_button.setOnAction(new EventHandler<ActionEvent>() {
@@ -84,7 +84,7 @@ public class Customer {
                 Main.loadWelcomeMenu();
             }
         });
-        VBox Cus_login_interface = new VBox(login_label, user_login_interface, customer_login_button, login_error, customer_register, back_button);
+        VBox Cus_login_interface = new VBox(10f,login_label, user_login_interface, customer_login_button, login_error, customer_register, back_button);
         Cus_login_interface.setBackground(customerBackground());
         Main.scene.setRoot(Cus_login_interface);
     }
@@ -126,14 +126,14 @@ public class Customer {
             "Standard (Free)",
             "Premium ($40.00 w/ First Annual Purchase)");
         accountType.setValue("Standard (Free)");
-        VBox reg_interface = new VBox(
-            new HBox(reg_user_textbox_label, reg_user_textbox, user_error),
-                new HBox(reg_pass_textbox_label, reg_pass_textbox, pass_error),
-                new HBox(reg_customer_name_label, reg_name, name_error),
-                new HBox(reg_customer_addr_label, reg_customer_addr, addr_error),
-                new HBox(reg_customer_phone_label, reg_customer_phone, phone_error),
-                new HBox(reg_customer_CC_Label, reg_customer_cc, cc_error),
-                new HBox(reg_customer_prem_label, accountType)
+        VBox reg_interface = new VBox(10f,
+            new HBox(5f,reg_user_textbox_label, reg_user_textbox, user_error),
+                new HBox(5f,reg_pass_textbox_label, reg_pass_textbox, pass_error),
+                new HBox(5f,reg_customer_name_label, reg_name, name_error),
+                new HBox(5f,reg_customer_addr_label, reg_customer_addr, addr_error),
+                new HBox(5f,reg_customer_phone_label, reg_customer_phone, phone_error),
+                new HBox(5f,reg_customer_CC_Label, reg_customer_cc, cc_error),
+                new HBox(5f,reg_customer_prem_label, accountType)
         );
         Button customer_reg_button = new Button("Register");
         //creates accounts when registering
@@ -203,7 +203,7 @@ public class Customer {
                 loadCustomerLogin();
             }
         });
-        VBox reg_scene = new VBox(customer_register_label, reg_interface, customer_reg_button, register_error, back_button);
+        VBox reg_scene = new VBox(10f,customer_register_label, reg_interface, customer_reg_button, register_error, back_button);
         reg_scene.setBackground(customerBackground());
         Main.scene.setRoot(reg_scene);
     }
@@ -246,7 +246,7 @@ public class Customer {
                 loadViewOrdersScreen();
             }
         });
-        VBox cus_menu_interface = new VBox(5f,welcome, updateInfo, Select_Items, View_Cart, View_Orders, logout);
+        VBox cus_menu_interface = new VBox(10f,welcome, updateInfo, Select_Items, View_Cart, View_Orders, logout);
         cus_menu_interface.setBackground(customerBackground());
         Main.scene.setRoot(cus_menu_interface);
     }
@@ -286,13 +286,13 @@ public class Customer {
                 "Premium ($40.00 w/ First Annual Purchase)");
         }
         accountType.setValue(Main.customer.isPremium() ? "Premium ($40.00 w/ First Annual Purchase)" : "Standard (Free)");
-        VBox update_interface = new VBox(
-            new HBox(passwordLabel, password, pass_error),
-            new HBox(nameLabel, name, name_error),
-            new HBox(addressLabel, address, addr_error),
-            new HBox(phoneLabel, phone, phone_error),
-            new HBox(creditCardLabel, creditCard, cc_error),
-            new HBox(premiumLabel, accountType)
+        VBox update_interface = new VBox(10f,
+            new HBox(5f,passwordLabel, password, pass_error),
+            new HBox(5f,nameLabel, name, name_error),
+            new HBox(5f,addressLabel, address, addr_error),
+            new HBox(5f,phoneLabel, phone, phone_error),
+            new HBox(5f,creditCardLabel, creditCard, cc_error),
+            new HBox(5f,premiumLabel, accountType)
         );
         update_interface.setBackground(customerBackground());
         Button update_button = new Button("Update Account");
@@ -349,7 +349,7 @@ public class Customer {
                 loadCustomerMenu();
             }
         });
-        VBox cus_update_interface =new VBox(header, update_interface, update_button, update_error, back_button);
+        VBox cus_update_interface =new VBox(10f,header, update_interface, update_button, update_error, back_button);
         cus_update_interface.setBackground(customerBackground());
         Main.scene.setRoot(cus_update_interface);
     }
@@ -366,7 +366,7 @@ public class Customer {
         Node[] supplier_array = new Node[Supplier_Counter];
         for(int i = 0; i < Supplier_Counter; i++){
             Button Catalog_Button = new Button(ItemSuppliers.get(i).getName());
-            HBox Catalog_UI = new HBox(Catalog_Button);
+            HBox Catalog_UI = new HBox(5f,Catalog_Button);
             supplier_array[i]=Catalog_UI;
             SupplierAccount sup = ItemSuppliers.get(i);
             Catalog_Button.setOnAction(new EventHandler<ActionEvent>() {
@@ -376,7 +376,7 @@ public class Customer {
                 }
             });
         }
-        ScrollPane oiPane = new ScrollPane(new VBox(supplier_array));
+        ScrollPane oiPane = new ScrollPane(new VBox(10f,supplier_array));
         oiPane.setPrefViewportHeight(Main.scene.getHeight());
         oiPane.setPrefViewportWidth(Main.scene.getWidth());
         oiPane.setPrefSize(Main.scene.getWidth(), Main.scene.getHeight());
@@ -386,7 +386,7 @@ public class Customer {
                 loadCustomerMenu();
             }
         });
-        VBox select_items_interface = new VBox(Select_items_label, oiPane, back_button);
+        VBox select_items_interface = new VBox(10f,Select_items_label, oiPane, back_button);
         select_items_interface.setBackground(customerBackground());
         Main.scene.setRoot(select_items_interface);
     }
@@ -449,7 +449,7 @@ public class Customer {
             });
             HBox buyUI = new HBox(5f, reduce, qty, increase);
             Label curQty = new Label(Main.cart.containsKey(item.id()) ? Main.cart.get(item.id()).getItemQty() + " on current order.\n" : "");
-            VBox storeItem = new VBox(itemName,itemInfo,itemPrc,buyUI,curQty);
+            VBox storeItem = new VBox(5f,itemName,itemInfo,itemPrc,buyUI,curQty);
             listOfItems[i] = storeItem;
         }
         VBox listOfItems_VBox = new VBox(listOfItems);
@@ -502,7 +502,7 @@ public class Customer {
             }
         });
 
-        VBox add_cart_interface = new VBox(welcomeToStore, oiPane, addButton, add_error, back_button);
+        VBox add_cart_interface = new VBox(10f,welcomeToStore, oiPane, addButton, add_error, back_button);
         add_cart_interface.setBackground(customerBackground());
         Main.scene.setRoot(add_cart_interface);
     }
@@ -518,7 +518,7 @@ public class Customer {
                 item = Item.getItem(id);
                 float cost = Main.customer.isPremium() ? item.getItemPremCost() : item.getItemRegCost();
                 runningTotal += Main.cart.get(id).getItemQty() * cost;
-                orderItems[i] = new VBox(
+                orderItems[i] = new VBox(10f,
                         new Label(item.getItemName() + ", " + item.getItemDesc()),
                         new Label("Ordered: " + Main.cart.get(id).getItemQty()),
                         new Label(String.format("Cost: $%,.2f", Main.cart.get(id).getItemQty() * cost)),
@@ -530,7 +530,7 @@ public class Customer {
         }
         float totalItemCost = runningTotal,
             premCost = Main.customer.isPremium() && !Main.customer.premPaid() ? 40 : 0;
-        ScrollPane oiPane = new ScrollPane(new VBox(orderItems));
+        ScrollPane oiPane = new ScrollPane(new VBox(10f,orderItems));
         oiPane.setPrefViewportHeight(Main.scene.getHeight());
         oiPane.setPrefViewportWidth(Main.scene.getWidth());
         oiPane.setPrefSize(Main.scene.getWidth(), Main.scene.getHeight());
@@ -550,7 +550,7 @@ public class Customer {
         TextField creditCard = new TextField(Main.customer.getCreditCard());
         Label invalidCC = new Label();
         invalidCC.setTextFill(Color.color(0.85f, 0, 0));
-        HBox ccInfo = new HBox(creditCard, invalidCC);
+        HBox ccInfo = new HBox(5f,creditCard, invalidCC);
         Node premInfo;
         if (Main.customer.isPremium() && !Main.customer.premPaid()) {
             Button switchAndLose = new Button("Switch and Lose");
@@ -566,11 +566,11 @@ public class Customer {
                     }
                 }
             });
-            premInfo = new VBox(
+            premInfo = new VBox(10f,
                 new Label(String.format("Premium Subscription Fee: $%,.2f", premCost)),
-                new HBox(new Label("Switch to a standard account to not pay a subscription fee, but pay more on items: "), switchAndLose));
+                new HBox(5f,new Label("Switch to a standard account to not pay a subscription fee, but pay more on items: "), switchAndLose));
         } else if (Main.customer.isPremium()) {
-            premInfo = new HBox(new Label("Thank you for being a premium customer!"));
+            premInfo = new HBox(5f,new Label("Thank you for being a premium customer!"));
         } else {
             Button switchAndSave = new Button("Switch and Save!");
             switchAndSave.setOnAction(new EventHandler<ActionEvent>() {
@@ -585,8 +585,8 @@ public class Customer {
                     }
                 }
             });
-            premInfo = new VBox(
-                    new HBox(new Label("Switch to a premium account to save on all items: "), switchAndSave),
+            premInfo = new VBox(10f,
+                    new HBox(5f,new Label("Switch to a premium account to save on all items: "), switchAndSave),
                     new Label("Premium subscriptions cost $40.00 and are billed to your first purchase each year, starting with this purchase"));
         }
         Label buy_error = new Label();
@@ -647,7 +647,7 @@ public class Customer {
         });
         if (Main.cart.size() > 0) {
             VBox view_cart_with_items_interface = new VBox(
-                5f,
+                10f,
                 View_Order_label,
                 oiPane,
                 deliveryType,
@@ -661,7 +661,7 @@ public class Customer {
             view_cart_with_items_interface.setBackground(customerBackground());
             Main.scene.setRoot(view_cart_with_items_interface);
         } else {
-            VBox view_cart_without_items_interface = new VBox(5f, View_Order_label, empty, back_button);
+            VBox view_cart_without_items_interface = new VBox(10f, View_Order_label, empty, back_button);
             view_cart_without_items_interface.setBackground(customerBackground());
             Main.scene.setRoot(view_cart_without_items_interface);
         }
@@ -702,12 +702,12 @@ public class Customer {
                         loadViewInvoiceScreen(invoice.id());
                     }
                 });
-                VBox orderMenu = new VBox(
+                VBox orderMenu = new VBox(10f,
                     new Label("Order #" + invoice.id()),
                     new Label("Order Date: " + date),
                     new Label("Delivery Method: " + deliveryType),
                     new Label("Order Status: " + orderStatus),
-                    new HBox(invoiceMenu)
+                    new HBox(5f,invoiceMenu)
                 );
                 invoiceItems[i] = orderMenu;
             }
@@ -717,11 +717,11 @@ public class Customer {
             iPane.setPrefSize(Main.scene.getWidth(), Main.scene.getHeight());
             Label view_invoice_label = new Label("Here are your past orders:");
 
-            VBox view_orders_with_orders =new VBox(view_invoice_label, iPane, back_button);
+            VBox view_orders_with_orders =new VBox(10f,view_invoice_label, iPane, back_button);
             view_orders_with_orders.setBackground(customerBackground());
             Main.scene.setRoot(view_orders_with_orders);
         } else {
-            VBox view_order_without_orders = new VBox(new Label("You do not have any historical orders."), back_button);
+            VBox view_order_without_orders = new VBox(10f,new Label("You do not have any historical orders."), back_button);
             view_order_without_orders.setBackground(customerBackground());
             Main.scene.setRoot(view_order_without_orders);
         }
@@ -742,7 +742,7 @@ public class Customer {
         });
         if (order == null) {
             Label view_invoice_label = new Label("This order does not exist");
-            VBox no_invoice_interface = new VBox(view_invoice_label, back_button);
+            VBox no_invoice_interface = new VBox(10f,view_invoice_label, back_button);
             no_invoice_interface.setBackground(customerBackground());
             Main.scene.setRoot(no_invoice_interface);
         } else {
@@ -768,11 +768,11 @@ public class Customer {
                 premCost = new Label(order.getPremCost() > 0 ? String.format("Premium Subscription Fee: $%,.2f", order.getPremCost()) : ""),
                 total = new Label(String.format("Total Cost: %,.2f", order.getOrderCost())),
                 authNumber = new Label("Authorization Number: " + order.getPurchaseAuth());
-            ScrollPane oiPane = new ScrollPane(new VBox(oiList));
+            ScrollPane oiPane = new ScrollPane(new VBox(10f,oiList));
             oiPane.setPrefViewportHeight(Main.scene.getHeight());
             oiPane.setPrefViewportWidth(Main.scene.getWidth());
             oiPane.setPrefSize(Main.scene.getWidth(), Main.scene.getHeight());
-            VBox view_invoice_with_invoice = new VBox(view_invoice_label, oiPane, deliveryCost, premCost, total, authNumber, back_button);
+            VBox view_invoice_with_invoice = new VBox(10f,view_invoice_label, oiPane, deliveryCost, premCost, total, authNumber, back_button);
             view_invoice_with_invoice.setBackground(customerBackground());
             Main.scene.setRoot(view_invoice_with_invoice);
         }
